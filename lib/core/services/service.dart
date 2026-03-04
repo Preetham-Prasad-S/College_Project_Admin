@@ -1,6 +1,6 @@
-import 'package:staff_app/features/home/domain/entities/college_location.dart';
+import 'package:geolocator/geolocator.dart';
 
 abstract interface class LocationService {
-  Future<Stream<CollegeLocation>> getCurrentLocation();
+  Stream<Position> getCurrentLocation();
   Future<void> getLocationPermission();
 }

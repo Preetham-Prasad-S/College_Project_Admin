@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:staff_app/core/services/service.dart';
 
 class CollegeLocation {
   final double longitude;

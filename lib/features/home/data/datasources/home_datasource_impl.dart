@@ -7,15 +7,15 @@ import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
 
 class HomeDatasourceImpl implements HomeDatasource {
-  final FirebaseFirestore _firebase;
+  final FirebaseFirestore _firebaseInstance;
 
-  HomeDatasourceImpl({required FirebaseFirestore dataSource})
-    : _firebase = dataSource;
+  HomeDatasourceImpl({required FirebaseFirestore firebaseInstance})
+    : _firebaseInstance = firebaseInstance;
 
   @override
   Future<CollegeLocationModel> getCollegeLocation() async {
     try {
-      final collegeLocation = await _firebase
+      final collegeLocation = await _firebaseInstance
           .collection("college")
           .doc("location_details")
           .get();
@@ -29,7 +29,7 @@ class HomeDatasourceImpl implements HomeDatasource {
   @override
   Future<StaffShiftModel> getStaffShift() async {
     try {
-      final staffShift = await _firebase
+      final staffShift = await _firebaseInstance
           .collection("college")
           .doc("shift_details")
           .get();
@@ -42,7 +42,7 @@ class HomeDatasourceImpl implements HomeDatasource {
   @override
   Future<StaffStatusModel> getStaffStatus() async {
     try {
-      final staffStatus = await _firebase
+      final staffStatus = await _firebaseInstance
           .collection("staff_status")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
