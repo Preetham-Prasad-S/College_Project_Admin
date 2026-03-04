@@ -29,18 +29,25 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppFailure, CollegeLocation>> getCollegeLocation() async {
     try {
-      final collegeLocation = await dataSource.getCollegeLocation()
+      final collegeLocation = await dataSource.getCollegeLocation();
 
       return right(CollegeLocation.fromModel(collegeLocation));
-    } on DeviceExcepiton catch (e) {
+    } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     }
   }
 
   @override
-  Future<Either<AppFailure, StaffShift>> getStaffShift() {
-    // TODO: implement getStaffShift
-    throw UnimplementedError();
+  Future<Either<AppFailure, StaffShift>> getStaffShift() async {
+    try {
+      final staffShit = await dataSource.getStaffShift();
+
+      print(staffShit);
+
+      return right(StaffShift.fromeModel(staffShit));
+    } on ServerException catch (e) {
+      return left(AppFailure(message: e.message));
+    }
   }
 
   @override

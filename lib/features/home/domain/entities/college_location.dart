@@ -7,13 +7,6 @@ class CollegeLocation {
 
   CollegeLocation({required this.longitude, required this.latitude});
 
-  factory CollegeLocation.fromJson(Map<String, dynamic> json) {
-    return CollegeLocation(
-      longitude: json["longitude"],
-      latitude: json["latitude"],
-    );
-  }
-
   factory CollegeLocation.fromModel(CollegeLocationModel model) {
     return CollegeLocation(
       longitude: model.longitude,

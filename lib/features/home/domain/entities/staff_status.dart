@@ -1,10 +1,12 @@
+import 'package:staff_app/features/home/data/models/staff_status_model.dart';
+
 class StaffStatus {
   final bool status;
 
   StaffStatus({required this.status});
 
-  factory StaffStatus.fromJson(Map<String, dynamic> json) {
-    return StaffStatus(status: json["check_in"]);
+  factory StaffStatus.fromeModel(StaffStatusModel model) {
+    return StaffStatus(status: model.status);
   }
 
   @override

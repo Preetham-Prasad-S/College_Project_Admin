@@ -20,7 +20,7 @@ class TestScreen extends StatelessWidget {
               locationService: GeolocatorService(),
             );
 
-            r.getCollegeLocation();
+            r.getStaffShift();
           },
           child: StreamBuilder(
             stream: HomeRepositoryImpl(
