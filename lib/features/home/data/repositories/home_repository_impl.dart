@@ -29,7 +29,7 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppFailure, CollegeLocation>> getCollegeLocation() async {
     try {
-      final collegeLocation = await dataSource.getCollegeLocation()
+      final collegeLocation = await dataSource.getCollegeLocation();
 
       return right(CollegeLocation.fromModel(collegeLocation));
     } on DeviceExcepiton catch (e) {
