@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:staff_app/features/home/data/models/college_location_model.dart';
 
 class CollegeLocation {
   final double longitude;
@@ -10,6 +11,13 @@ class CollegeLocation {
     return CollegeLocation(
       longitude: json["longitude"],
       latitude: json["latitude"],
+    );
+  }
+
+  factory CollegeLocation.fromModel(CollegeLocationModel model) {
+    return CollegeLocation(
+      longitude: model.longitude,
+      latitude: model.latitude,
     );
   }
 

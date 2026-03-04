@@ -13,11 +13,14 @@ class TestScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            final d = HomeDatasourceImpl(
-              firebaseInstance: FirebaseFirestore.instance,
+            final r = HomeRepositoryImpl(
+              dataSource: HomeDatasourceImpl(
+                firebaseInstance: FirebaseFirestore.instance,
+              ),
+              locationService: GeolocatorService(),
             );
 
-            d.getStaffShift();
+            r.getCollegeLocation();
           },
           child: StreamBuilder(
             stream: HomeRepositoryImpl(

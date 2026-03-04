@@ -16,7 +16,7 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Stream<Either<AppFailure, CollegeLocation>> currentLocation() async* {
     try {
-      final locationStream = await locationService.getCurrentLocation();
+      final locationStream = locationService.getCurrentLocation();
 
       yield* locationStream.map((position) {
         return right(CollegeLocation.fromService(position));
@@ -27,9 +27,14 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<AppFailure, CollegeLocation>> getCollegeLocation() {
-    // TODO: implement getCollegeLocation
-    throw UnimplementedError();
+  Future<Either<AppFailure, CollegeLocation>> getCollegeLocation() async {
+    try {
+      final collegeLocation = await dataSource.getCollegeLocation()
+
+      return right(CollegeLocation.fromModel(collegeLocation));
+    } on DeviceExcepiton catch (e) {
+      return left(AppFailure(message: e.message));
+    }
   }
 
   @override
