@@ -56,6 +56,8 @@ class HomeRepositoryImpl implements HomeRepository {
       return right(StaffStatus.fromModel(staffStatus));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
     }
   }
 }

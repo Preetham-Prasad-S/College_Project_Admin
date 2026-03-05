@@ -28,17 +28,17 @@ class MyApp extends StatelessWidget {
           seedColor: Color.fromRGBO(19, 109, 236, 1),
         ),
       ),
-      home: TestScreen(),
-      // home: StreamBuilder(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.hasData) {
-      //       return BaseScreen();
-      //     } else {
-      //       return LoginScreen();
-      //     }
-      //   },
-      // ),
+
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return TestScreen();
+          } else {
+            return LoginScreen();
+          }
+        },
+      ),
     );
   }
 }
