@@ -6,5 +6,5 @@ abstract interface class HomeDatasource {
   Future<StaffShiftModel> getStaffShift();
   Future<StaffStatusModel> getStaffStatus();
   Future<CollegeLocationModel> getCollegeLocation();
-  // Future<StaffHistory> getStaffHistory();
+  // Future<StaffHistoryModel> getStaffHistory();
 }

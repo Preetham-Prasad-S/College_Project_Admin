@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:staff_app/features/home/dependency.dart';
 
-class HomeAttendanceEntryCardWidget extends StatelessWidget {
+class HomeAttendanceEntryCardWidget extends ConsumerWidget {
   const HomeAttendanceEntryCardWidget({super.key});
 
+  String currentDate() {
+    return DateFormat("EEE, dd MMM yyyy").format(DateTime.now());
+  }
+
+  String currentTime() {
+    return DateFormat("hh:mm a").format(DateTime.now());
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final attendanceCardState = ref.watch(attendanceEntryControllerProvider);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -30,10 +43,12 @@ class HomeAttendanceEntryCardWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 25),
-
-            Text("--:--", style: TextStyle(color: Colors.white, height: 1)),
             Text(
-              "--:--",
+              currentDate(),
+              style: TextStyle(color: Colors.white, height: 1),
+            ),
+            Text(
+              currentTime(),
               style: TextStyle(
                 height: 1.2,
                 color: Colors.white,
@@ -61,9 +76,18 @@ class HomeAttendanceEntryCardWidget extends StatelessWidget {
                       width: 10,
                     ),
                     const SizedBox(width: 10),
-                    const Text(
-                      "Currently Clocked Out",
-                      style: TextStyle(color: Colors.white),
+                    attendanceCardState.when(
+                      data: (data) => Text(
+                        data.value!.isClockedIn
+                            ? "Currently Clocked In"
+                            : "Currently Clocked Out",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      error: (error, stackTrace) => Text("error"),
+                      loading: () => Text(
+                        "Fetching Date",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),

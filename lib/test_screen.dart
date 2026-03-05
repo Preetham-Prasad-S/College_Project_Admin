@@ -1,48 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:staff_app/core/services/geolocator_service.dart';
-import 'package:staff_app/core/usecases/usecase.dart';
-import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
-import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
-import 'package:staff_app/features/home/domain/usescases/attendance_entry_usecase.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/features/home/dependency.dart';
 
-class TestScreen extends StatelessWidget {
+class TestScreen extends ConsumerWidget {
   const TestScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final repository = HomeRepositoryImpl(
-      dataSource: HomeDatasourceImpl(
-        firebaseInstance: FirebaseFirestore.instance,
-      ),
-      locationService: GeolocatorService(),
-    );
-
-    final usecase = AttendanceEntryUsecase(repository: repository);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final a = ref.watch(attendanceEntryControllerProvider);
 
     return Scaffold(
       body: Center(
-        child: StreamBuilder(
-          stream: usecase(NoParams()),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-
-            if (!snapshot.hasData) {
-              return const Text("No data");
-            }
-
-            final result = snapshot.data!;
-
-            return result.fold(
-              (failure) => Text("Error: ${failure.message}"),
-              (attendance) => Text(
-                "In Premises: ${attendance.inPremises}\n"
-                "Clocked In: ${attendance.isClockedIn}",
-              ),
-            );
-          },
+        child: a.when(
+          data: (data) => Text("${data.value?.inPremises}"),
+          error: (error, stackTrace) => Text("$error"),
+          loading: () => CircularProgressIndicator(),
         ),
       ),
     );
