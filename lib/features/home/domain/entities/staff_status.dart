@@ -5,7 +5,7 @@ class StaffStatus {
 
   StaffStatus({required this.status});
 
-  factory StaffStatus.fromeModel(StaffStatusModel model) {
+  factory StaffStatus.fromModel(StaffStatusModel model) {
     return StaffStatus(status: model.status);
   }
 

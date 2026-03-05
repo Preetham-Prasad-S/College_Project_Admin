@@ -53,7 +53,7 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final staffStatus = await dataSource.getStaffStatus();
 
-      return right(StaffStatus.fromeModel(staffStatus));
+      return right(StaffStatus.fromModel(staffStatus));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     }
