@@ -42,8 +42,6 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final staffShit = await dataSource.getStaffShift();
 
-      print(staffShit);
-
       return right(StaffShift.fromeModel(staffShit));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
@@ -51,8 +49,13 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<AppFailure, StaffStatus>> getStaffStatus() {
-    // TODO: implement getStaffStatus
-    throw UnimplementedError();
+  Future<Either<AppFailure, StaffStatus>> getStaffStatus() async {
+    try {
+      final staffStatus = await dataSource.getStaffStatus();
+
+      return right(StaffStatus.fromeModel(staffStatus));
+    } on ServerException catch (e) {
+      return left(AppFailure(message: e.message));
+    }
   }
 }
