@@ -36,6 +36,7 @@ final attendanceEntryUsecaseProvider = Provider<AttendanceEntryUsecase>(
 );
 
 final attendanceEntryControllerProvider =
-    StreamNotifierProvider<AttendanceEntryController, AsyncValue<Attendance>>(
-  AttendanceEntryController.new,
-);
+    StreamNotifierProvider.autoDispose<
+      AttendanceEntryController,
+      AsyncValue<Attendance>
+    >(AttendanceEntryController.new);

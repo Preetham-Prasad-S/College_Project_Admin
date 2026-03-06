@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/college_location_model.dart';
+import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
 
@@ -51,5 +52,27 @@ class HomeDatasourceImpl implements HomeDatasource {
     } catch (e) {
       throw ServerException(message: e.toString());
     }
+  }
+
+  @override
+  Future<StaffHistoryModel> getStaffHistory(DateTime dateTime) async {
+    try {
+      final staffHistory = await _firebaseInstance
+          .collection("history")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      final Map<String, dynamic>? data =
+          staffHistory["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"];
+
+      if (data == null) {
+        return StaffHistoryModel(clockIn: null, clockOut: null);
+      }
+
+      return StaffHistoryModel.fromJson(data);
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+
   }
 }
