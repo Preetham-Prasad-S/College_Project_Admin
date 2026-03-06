@@ -4,6 +4,7 @@ import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
+import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/entities/staff_status.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
@@ -23,6 +24,8 @@ class HomeRepositoryImpl implements HomeRepository {
       });
     } on DeviceExcepiton catch (e) {
       yield left(AppFailure(message: e.message));
+    } catch (e) {
+      yield left(AppFailure(message: e.toString()));
     }
   }
 
@@ -34,6 +37,8 @@ class HomeRepositoryImpl implements HomeRepository {
       return right(CollegeLocation.fromModel(collegeLocation));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
     }
   }
 
@@ -45,6 +50,8 @@ class HomeRepositoryImpl implements HomeRepository {
       return right(StaffShift.fromeModel(staffShit));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
     }
   }
 
@@ -54,6 +61,21 @@ class HomeRepositoryImpl implements HomeRepository {
       final staffStatus = await dataSource.getStaffStatus();
 
       return right(StaffStatus.fromModel(staffStatus));
+    } on ServerException catch (e) {
+      return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AppFailure, StaffHistory>> getStaffHistory(
+    DateTime dateTime,
+  ) async {
+    try {
+      final staffHistory = await dataSource.getStaffHistory(dateTime);
+
+      return right(StaffHistory.fromModel(staffHistory));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {
