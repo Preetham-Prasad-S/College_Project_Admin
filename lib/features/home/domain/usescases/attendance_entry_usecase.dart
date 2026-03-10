@@ -4,7 +4,6 @@ import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/usecases/usecase.dart';
 import 'package:staff_app/features/home/domain/entities/attendance.dart';
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
-import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 
 class AttendanceEntryUsecase
@@ -21,26 +20,24 @@ class AttendanceEntryUsecase
     final staffHistory = await _repository.getStaffHistory(params.dateTime);
     final currentLocation = _repository.currentLocation();
     final collegeLocationResult = await _repository.getCollegeLocation();
-    final staffStatusResult = await _repository.getStaffStatus();
+    // final staffStatusResult = await _repository.getStaffStatus();
 
-    print(staffHistory);
-
-    if (staffStatusResult.isLeft()) {
-      yield left(staffStatusResult.getLeft().toNullable()!);
-      return;
-    }
+    // if (staffStatusResult.isLeft()) {
+    //   yield left(staffStatusResult.getLeft().toNullable()!);
+    //   return;
+    // }
 
     if (staffHistory.isLeft()) {
-      yield left(staffStatusResult.getLeft().toNullable()!);
+      yield left(staffHistory.getLeft().toNullable()!);
       return;
     }
 
     if (collegeLocationResult.isLeft()) {
-      yield left(staffStatusResult.getLeft().toNullable()!);
+      yield left(collegeLocationResult.getLeft().toNullable()!);
       return;
     }
 
-    final staffStatus = staffStatusResult.getRight().toNullable()!;
+    // final staffStatus = staffStatusResult.getRight().toNullable()!;
     final collegeLocation = collegeLocationResult.getRight().toNullable()!;
     final staffHistoryData = staffHistory.getRight().toNullable()!;
 

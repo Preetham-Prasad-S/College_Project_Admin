@@ -1,21 +1,59 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:staff_app/features/home/dependency.dart';
+import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 
-class HomeAttendanceEntryCardWidget extends ConsumerWidget {
+class HomeAttendanceEntryCardWidget extends ConsumerStatefulWidget {
   const HomeAttendanceEntryCardWidget({super.key});
+
+  @override
+  ConsumerState<HomeAttendanceEntryCardWidget> createState() =>
+      _HomeAttendanceEntryCardWidgetState();
+}
+
+class _HomeAttendanceEntryCardWidgetState
+    extends ConsumerState<HomeAttendanceEntryCardWidget> {
+  late Timer tick;
+  AsyncValue<StaffShift>? staffShift;
+  String currentTime = DateFormat("hh:mm a").format(DateTime.now());
+
+  @override
+  void initState() {
+    super.initState();
+    tick = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) => setState(() {
+        currentTime = DateFormat("hh:mm a").format(DateTime.now());
+      }),
+    );
+  }
 
   String currentDate() {
     return DateFormat("EEE, dd MMM yyyy").format(DateTime.now());
   }
 
-  String currentTime() {
-    return DateFormat("hh:mm a").format(DateTime.now());
+  Future<void> loadStaffShift() async {
+    final controller = ref.read(attendanceEntryControllerProvider.notifier);
+
+    final shift = await controller.getStaffShift();
+
+    if (mounted) {
+      setState(() {
+        staffShift = shift;
+      });
+    }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    tick.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final attendanceCardState = ref.watch(attendanceEntryControllerProvider);
 
     return Container(
@@ -48,7 +86,7 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
               style: TextStyle(color: Colors.white, height: 1),
             ),
             Text(
-              currentTime(),
+              currentTime,
               style: TextStyle(
                 height: 1.2,
                 color: Colors.white,
@@ -128,310 +166,21 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
             SizedBox(
               height: 80,
               child: attendanceCardState.when(
-                data: (data) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        side: WidgetStatePropertyAll(
-                          BorderSide(
-                            color: true
-                                ? const Color.fromRGBO(0, 0, 0, 0)
-                                : Color.fromRGBO(255, 255, 255, 0.2),
-                          ),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          true
-                              ? const Color.fromRGBO(255, 255, 255, 1)
-                              : Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
-                        elevation: WidgetStatePropertyAll(0),
-                        fixedSize: WidgetStatePropertyAll(Size(150, 60)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 20,
-                            color: true
-                                ? Color.fromRGBO(19, 109, 236, 1)
-                                : Color.fromRGBO(255, 255, 255, 0.3),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Clock In",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: true
-                                  ? Color.fromRGBO(19, 109, 236, 1)
-                                  : Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 15),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        side: WidgetStatePropertyAll(
-                          BorderSide(
-                            color: true
-                                ? const Color.fromRGBO(0, 0, 0, 0)
-                                : Color.fromRGBO(255, 255, 255, 0.2),
-                          ),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          true
-                              ? const Color.fromRGBO(255, 255, 255, 1)
-                              : Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
-                        elevation: WidgetStatePropertyAll(0),
-                        fixedSize: WidgetStatePropertyAll(Size(150, 60)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 20,
-                            color: true
-                                ? Color.fromRGBO(236, 19, 19, 1)
-                                : Color.fromRGBO(255, 255, 255, 0.3),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Clock Out",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: true
-                                  ? Color.fromRGBO(236, 19, 19, 1)
-                                  : Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                error: (error, stackTrace) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        side: WidgetStatePropertyAll(
-                          BorderSide(
-                            color: true
-                                ? const Color.fromRGBO(0, 0, 0, 0)
-                                : Color.fromRGBO(255, 255, 255, 0.2),
-                          ),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          true
-                              ? const Color.fromRGBO(255, 255, 255, 1)
-                              : Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
-                        elevation: WidgetStatePropertyAll(0),
-                        fixedSize: WidgetStatePropertyAll(Size(150, 60)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 20,
-                            color: true
-                                ? Color.fromRGBO(19, 109, 236, 1)
-                                : Color.fromRGBO(255, 255, 255, 0.3),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Clock In",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: true
-                                  ? Color.fromRGBO(19, 109, 236, 1)
-                                  : Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 15),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        side: WidgetStatePropertyAll(
-                          BorderSide(
-                            color: true
-                                ? const Color.fromRGBO(0, 0, 0, 0)
-                                : Color.fromRGBO(255, 255, 255, 0.2),
-                          ),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          true
-                              ? const Color.fromRGBO(255, 255, 255, 1)
-                              : Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
-                        elevation: WidgetStatePropertyAll(0),
-                        fixedSize: WidgetStatePropertyAll(Size(150, 60)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 20,
-                            color: true
-                                ? Color.fromRGBO(236, 19, 19, 1)
-                                : Color.fromRGBO(255, 255, 255, 0.3),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Clock Out",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: true
-                                  ? Color.fromRGBO(236, 19, 19, 1)
-                                  : Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                loading: () => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        side: WidgetStatePropertyAll(
-                          BorderSide(color: Color.fromRGBO(255, 255, 255, 0.2)),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
-                        elevation: WidgetStatePropertyAll(0),
-                        fixedSize: WidgetStatePropertyAll(Size(150, 60)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 20,
-                            color: true
-                                ? Color.fromRGBO(19, 109, 236, 1)
-                                : Color.fromRGBO(255, 255, 255, 0.3),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Clock In",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: true
-                                  ? Color.fromRGBO(19, 109, 236, 1)
-                                  : Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 15),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        side: WidgetStatePropertyAll(
-                          BorderSide(color: Color.fromRGBO(255, 255, 255, 0.2)),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
-                        elevation: WidgetStatePropertyAll(0),
-                        fixedSize: WidgetStatePropertyAll(Size(150, 60)),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 20,
-                            color: Color.fromRGBO(255, 255, 255, 0.3),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Clock Out",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color.fromRGBO(255, 255, 255, 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                data: (data) => AttendanceEntryButtonsWidget(state: true),
+                loading: () => AttendanceEntryButtonsWidget(state: false),
+                error: (error, stackTrace) =>
+                    AttendanceEntryButtonsWidget(state: false),
               ),
             ),
             SizedBox(height: 10),
 
-            Text(
-              "Shift",
-              style: TextStyle(
-                color: const Color.fromRGBO(255, 255, 255, 0.75),
-              ),
-            ),
-            SizedBox(height: 5),
+            staffShift?.when(
+                  data: (data) => Text("Data"),
+                  error: (error, stackTrace) => Text("Error"),
+                  loading: () => Text("loading"),
+                ) ??
+                Text("Couldn't Get Staff Shift"),
+
             Container(
               alignment: Alignment.center,
               width: 250,
@@ -440,35 +189,153 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 color: Color.fromRGBO(255, 255, 255, 0.25),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: true
-                          ? Color.fromRGBO(99, 255, 156, 1)
-                          : const Color.fromARGB(255, 255, 55, 41),
-
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    height: 10,
-                    width: 10,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    // inCollege
-                    true
-                        ? "INSIDE CAMPUS ONLY (GEOFENCED)"
-                        : "NOT IN COLLEGE PREMISE",
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ],
-              ),
+              child: InPremisesWidget(state: 0),
             ),
             SizedBox(height: 25),
           ],
         ),
       ),
+    );
+  }
+}
+
+class InPremisesWidget extends StatelessWidget {
+  final int state;
+
+  const InPremisesWidget({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: true
+                ? Color.fromRGBO(99, 255, 156, 1)
+                : const Color.fromARGB(255, 255, 55, 41),
+
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          height: 10,
+          width: 10,
+        ),
+        const SizedBox(width: 10),
+
+        Text(
+          "ERROR IN FETCHING LOCATION",
+          style: TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ],
+    );
+  }
+}
+
+class AttendanceEntryButtonsWidget extends StatelessWidget {
+  final bool state;
+
+  const AttendanceEntryButtonsWidget({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          style: ButtonStyle(
+            side: WidgetStatePropertyAll(
+              BorderSide(
+                color: state
+                    ? const Color.fromRGBO(0, 0, 0, 0)
+                    : Color.fromRGBO(255, 255, 255, 0.2),
+              ),
+            ),
+            backgroundColor: WidgetStatePropertyAll(
+              state
+                  ? const Color.fromRGBO(255, 255, 255, 1)
+                  : Color.fromRGBO(255, 255, 255, 0.1),
+            ),
+            elevation: WidgetStatePropertyAll(0),
+            fixedSize: WidgetStatePropertyAll(Size(150, 60)),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
+              ),
+            ),
+          ),
+          onPressed: () {},
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.login,
+                size: 20,
+                color: state
+                    ? Color.fromRGBO(19, 109, 236, 1)
+                    : Color.fromRGBO(255, 255, 255, 0.3),
+              ),
+              SizedBox(width: 10),
+              Text(
+                "Clock In",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: state
+                      ? Color.fromRGBO(19, 109, 236, 1)
+                      : Color.fromRGBO(255, 255, 255, 0.3),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 15),
+        ElevatedButton(
+          style: ButtonStyle(
+            side: WidgetStatePropertyAll(
+              BorderSide(
+                color: state
+                    ? const Color.fromRGBO(0, 0, 0, 0)
+                    : Color.fromRGBO(255, 255, 255, 0.2),
+              ),
+            ),
+            backgroundColor: WidgetStatePropertyAll(
+              state
+                  ? const Color.fromRGBO(255, 255, 255, 1)
+                  : Color.fromRGBO(255, 255, 255, 0.1),
+            ),
+            elevation: WidgetStatePropertyAll(0),
+            fixedSize: WidgetStatePropertyAll(Size(150, 60)),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
+              ),
+            ),
+          ),
+          onPressed: () {},
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.login,
+                size: 20,
+                color: state
+                    ? const Color.fromARGB(255, 255, 55, 41)
+                    : Color.fromRGBO(255, 255, 255, 0.3),
+              ),
+              SizedBox(width: 10),
+              Text(
+                "Clock Out",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: state
+                      ? const Color.fromARGB(255, 255, 55, 41)
+                      : Color.fromRGBO(255, 255, 255, 0.3),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

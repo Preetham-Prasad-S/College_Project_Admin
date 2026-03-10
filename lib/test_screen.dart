@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
@@ -12,6 +13,7 @@ class TestScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final a = ref.watch(attendanceEntryControllerProvider);
+    final ac = ref.read(attendanceEntryControllerProvider.notifier);
 
     final datasources = HomeDatasourceImpl(
       firebaseInstance: FirebaseFirestore.instance,
@@ -28,9 +30,14 @@ class TestScreen extends ConsumerWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              final d = await datasources.getStaffHistory(DateTime(2023, 1, 1));
-              final r = await repo.getStaffHistory(DateTime(2023, 1, 2));
-              print(r);
+              final result = await ac.getStaffShift();
+
+              result.when(
+                data: (data) => print(data),
+                error: (error, stackTrace) =>
+                    print((error as AppFailure).message),
+                loading: () => print("loading"),
+              );
             },
             child: Text("Press Me Hard Daddy"),
           ),

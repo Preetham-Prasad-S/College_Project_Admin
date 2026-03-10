@@ -8,6 +8,7 @@ import 'package:staff_app/features/home/data/repositories/home_repository_impl.d
 import 'package:staff_app/features/home/domain/entities/attendance.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 import 'package:staff_app/features/home/domain/usescases/attendance_entry_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
 import 'package:staff_app/features/home/presentation/controllers/attendance_entry_controller.dart';
 
 final firebaseStoreageInstanceProvider = Provider<FirebaseFirestore>(
@@ -33,6 +34,10 @@ final homeRepositoryProvider = Provider<HomeRepository>(
 
 final attendanceEntryUsecaseProvider = Provider<AttendanceEntryUsecase>(
   (ref) => AttendanceEntryUsecase(repository: ref.read(homeRepositoryProvider)),
+);
+
+final getStaffShiftUsecaseProvider = Provider<GetStaffShiftUsecase>(
+  (ref) => GetStaffShiftUsecase(repository: ref.read(homeRepositoryProvider)),
 );
 
 final attendanceEntryControllerProvider =
