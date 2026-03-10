@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:staff_app/features/home/dependency.dart';
-import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 
 class HomeAttendanceEntryCardWidget extends ConsumerStatefulWidget {
   const HomeAttendanceEntryCardWidget({super.key});
@@ -16,7 +15,6 @@ class HomeAttendanceEntryCardWidget extends ConsumerStatefulWidget {
 class _HomeAttendanceEntryCardWidgetState
     extends ConsumerState<HomeAttendanceEntryCardWidget> {
   late Timer tick;
-  AsyncValue<StaffShift>? staffShift;
   String currentTime = DateFormat("hh:mm a").format(DateTime.now());
 
   @override
@@ -34,18 +32,6 @@ class _HomeAttendanceEntryCardWidgetState
     return DateFormat("EEE, dd MMM yyyy").format(DateTime.now());
   }
 
-  Future<void> loadStaffShift() async {
-    final controller = ref.read(attendanceEntryControllerProvider.notifier);
-
-    final shift = await controller.getStaffShift();
-
-    if (mounted) {
-      setState(() {
-        staffShift = shift;
-      });
-    }
-  }
-
   @override
   void dispose() {
     tick.cancel();
@@ -55,6 +41,7 @@ class _HomeAttendanceEntryCardWidgetState
   @override
   Widget build(BuildContext context) {
     final attendanceCardState = ref.watch(attendanceEntryControllerProvider);
+    final staffShift = ref.watch(getstaffShiftProvider);
 
     return Container(
       decoration: BoxDecoration(
@@ -174,12 +161,29 @@ class _HomeAttendanceEntryCardWidgetState
             ),
             SizedBox(height: 10),
 
-            staffShift?.when(
-                  data: (data) => Text("Data"),
-                  error: (error, stackTrace) => Text("Error"),
-                  loading: () => Text("loading"),
-                ) ??
-                Text("Couldn't Get Staff Shift"),
+            staffShift.when(
+              data: (data) => Text(
+                "Shift : ${DateFormat("hh:mm a").format(data.value!.start)} - ${DateFormat("hh:mm a").format(data.value!.end)}",
+                style: TextStyle(
+                  height: 2,
+                  color: const Color.fromRGBO(255, 255, 255, 0.7),
+                ),
+              ),
+              error: (error, stackTrace) => Text(
+                "Failed To Obtain Shift Details",
+                style: TextStyle(
+                  height: 2,
+                  color: const Color.fromRGBO(255, 255, 255, 0.7),
+                ),
+              ),
+              loading: () => Text(
+                "Getting Shift Details........",
+                style: TextStyle(
+                  height: 2,
+                  color: const Color.fromRGBO(255, 255, 255, 0.7),
+                ),
+              ),
+            ),
 
             Container(
               alignment: Alignment.center,
@@ -189,7 +193,13 @@ class _HomeAttendanceEntryCardWidgetState
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 color: Color.fromRGBO(255, 255, 255, 0.25),
               ),
-              child: InPremisesWidget(state: 0),
+              child: attendanceCardState.when(
+                data: (data) => InPremisesWidget(
+                  state: data.value!.inPremises ? "true" : "false",
+                ),
+                error: (error, stackTrace) => InPremisesWidget(state: "error"),
+                loading: () => InPremisesWidget(state: "loading"),
+              ),
             ),
             SizedBox(height: 25),
           ],
@@ -200,7 +210,7 @@ class _HomeAttendanceEntryCardWidgetState
 }
 
 class InPremisesWidget extends StatelessWidget {
-  final int state;
+  final String state;
 
   const InPremisesWidget({super.key, required this.state});
 
@@ -211,8 +221,10 @@ class InPremisesWidget extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: true
+            color: state == "true"
                 ? Color.fromRGBO(99, 255, 156, 1)
+                : state == "loading"
+                ? Color.fromRGBO(255, 245, 99, 1)
                 : const Color.fromARGB(255, 255, 55, 41),
 
             borderRadius: BorderRadius.all(Radius.circular(10)),

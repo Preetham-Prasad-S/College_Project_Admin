@@ -6,10 +6,12 @@ import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
 import 'package:staff_app/features/home/domain/entities/attendance.dart';
+import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 import 'package:staff_app/features/home/domain/usescases/attendance_entry_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
 import 'package:staff_app/features/home/presentation/controllers/attendance_entry_controller.dart';
+import 'package:staff_app/features/home/presentation/controllers/staff_shift_controller.dart';
 
 final firebaseStoreageInstanceProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
@@ -39,6 +41,11 @@ final attendanceEntryUsecaseProvider = Provider<AttendanceEntryUsecase>(
 final getStaffShiftUsecaseProvider = Provider<GetStaffShiftUsecase>(
   (ref) => GetStaffShiftUsecase(repository: ref.read(homeRepositoryProvider)),
 );
+
+final getstaffShiftProvider =
+    AsyncNotifierProvider<StaffShiftController, AsyncValue<StaffShift>>(
+      () => StaffShiftController(),
+    );
 
 final attendanceEntryControllerProvider =
     StreamNotifierProvider.autoDispose<

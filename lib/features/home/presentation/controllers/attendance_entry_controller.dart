@@ -23,14 +23,4 @@ class AttendanceEntryController extends StreamNotifier<AsyncValue<Attendance>> {
     });
   }
 
-  Future<AsyncValue<StaffShift>> getStaffShift() async {
-    final getStaffShiftUsecase = ref.read(getStaffShiftUsecaseProvider);
-
-    final result = await getStaffShiftUsecase(NoParams());
-
-    return result.fold(
-      (AppFailure failure) => AsyncError(failure.message, StackTrace.current),
-      (StaffShift shift) => AsyncData(shift),
-    );
-  }
 }
