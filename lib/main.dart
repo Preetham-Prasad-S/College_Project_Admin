@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/base_screen.dart';
 import 'package:staff_app/firebase_options.dart';
 import 'package:staff_app/login_screen.dart';
+import 'package:staff_app/test_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return BaseScreen();
+            return TestScreen();
           } else {
             return LoginScreen();
           }

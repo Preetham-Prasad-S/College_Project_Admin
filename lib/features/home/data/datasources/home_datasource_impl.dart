@@ -6,6 +6,7 @@ import 'package:staff_app/features/home/data/models/college_location_model.dart'
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
+import 'package:staff_app/features/home/dependency.dart';
 
 class HomeDatasourceImpl implements HomeDatasource {
   final FirebaseFirestore _firebaseInstance;
@@ -66,13 +67,46 @@ class HomeDatasourceImpl implements HomeDatasource {
           staffHistory["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"];
 
       if (data == null) {
-        return StaffHistoryModel(clockIn: null, clockOut: null);
+        throw ServerException(message: "Error in getting staff history");
       }
 
       return StaffHistoryModel.fromJson(data);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
+  }
 
+  @override
+  Future<void> setStaffHistory(StaffHistoryModel model) async {
+    try {
+      final data = await _firebaseInstance
+          .collection("history")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      final result = data.data();
+
+      print(result);
+
+      // if (result == null) {
+      //   throw ServerException(message: "No Correct key found in DB");
+      // }
+
+      // result["staff_history"][model.clockIn.year][model.clockIn.month][model
+      //         .clockIn
+      //         .day]["clock_in"] =
+      //     model.clockIn.millisecondsSinceEpoch;
+
+      // result["staff_history"][model.clockOut.year][model.clockOut.month][model
+      //         .clockOut
+      //         .day]["clock_out"] =
+      //     model.clockIn.millisecondsSinceEpoch;
+      // await _firebaseInstance
+      //     .collection("history")
+      //     .doc(FirebaseAuth.instance.currentUser!.uid)
+      //     .set(result);
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
   }
 }

@@ -8,4 +8,5 @@ abstract interface class HomeDatasource {
   Future<StaffStatusModel> getStaffStatus();
   Future<CollegeLocationModel> getCollegeLocation();
   Future<StaffHistoryModel> getStaffHistory(DateTime dateTime);
+  Future<void> setStaffHistory(StaffHistoryModel model);
 }

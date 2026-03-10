@@ -23,4 +23,5 @@ class AttendanceEntryController extends StreamNotifier<AsyncValue<Attendance>> {
     });
   }
 
+  Future<void> clockIn() async {}
 }

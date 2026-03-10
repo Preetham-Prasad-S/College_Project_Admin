@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
+import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
 import 'package:staff_app/features/home/dependency.dart';
+import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 
 class TestScreen extends ConsumerWidget {
   const TestScreen({super.key});
@@ -30,13 +32,13 @@ class TestScreen extends ConsumerWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              final result = await ac.getStaffShift();
-
-              result.when(
-                data: (data) => print(data),
-                error: (error, stackTrace) =>
-                    print((error as AppFailure).message),
-                loading: () => print("loading"),
+              HomeDatasourceImpl(
+                firebaseInstance: FirebaseFirestore.instance,
+              ).setStaffHistory(
+                StaffHistoryModel(
+                  clockIn: DateTime.now(),
+                  clockOut: DateTime.now(),
+                ),
               );
             },
             child: Text("Press Me Hard Daddy"),
