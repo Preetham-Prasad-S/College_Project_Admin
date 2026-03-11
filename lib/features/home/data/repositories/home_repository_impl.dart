@@ -57,18 +57,18 @@ class HomeRepositoryImpl implements HomeRepository {
     }
   }
 
-  @override
-  Future<Either<AppFailure, StaffStatus>> getStaffStatus() async {
-    try {
-      final staffStatus = await dataSource.getStaffStatus();
+  // @override
+  // Future<Either<AppFailure, StaffStatus>> getStaffStatus() async {
+  //   try {
+  //     final staffStatus = await dataSource.getStaffStatus();
 
-      return right(StaffStatus.fromModel(staffStatus));
-    } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
-    } catch (e) {
-      return left(AppFailure(message: e.toString()));
-    }
-  }
+  //     return right(StaffStatus.fromModel(staffStatus));
+  //   } on ServerException catch (e) {
+  //     return left(AppFailure(message: e.message));
+  //   } catch (e) {
+  //     return left(AppFailure(message: e.toString()));
+  //   }
+  // }
 
   @override
   Future<Either<AppFailure, StaffHistory>> getStaffHistory(

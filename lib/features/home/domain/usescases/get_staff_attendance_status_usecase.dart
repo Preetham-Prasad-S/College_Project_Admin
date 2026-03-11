@@ -3,6 +3,7 @@ import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/usecases/usecase.dart';
 import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 import 'package:staff_app/features/home/domain/entities/staff_status.dart';
+import 'package:staff_app/features/home/domain/enums/staff_status_enum.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 
 class GetStaffAttendanceStatusUsecase
@@ -24,12 +25,12 @@ class GetStaffAttendanceStatusUsecase
 
       (StaffHistory data) {
         if (data.clockIn == null) {
-          return right(StaffStatus(status: "clocked_out"));
+          return right(StaffStatus(status: StaffStatusEnum.clockedOut));
         }
         if (data.clockOut == null) {
-          return right(StaffStatus(status: "clocked_in"));
+          return right(StaffStatus(status: StaffStatusEnum.clockedIn));
         }
-        return right(StaffStatus(status: "completed"));
+        return right(StaffStatus(status: StaffStatusEnum.completed));
       },
     );
   }

@@ -11,7 +11,7 @@ abstract interface class HomeRepository {
   Stream<Either<AppFailure, CollegeLocation>> currentLocation();
   Future<Either<AppFailure, CollegeLocation>> getCollegeLocation();
   Future<Either<AppFailure, StaffShift>> getStaffShift();
-  Future<Either<AppFailure, StaffStatus>> getStaffStatus();
+  // Future<Either<AppFailure, StaffStatus>> getStaffStatus();
   Future<Either<AppFailure, StaffHistory>> getStaffHistory(DateTime dateTime);
   Future<Either<AppFailure, void>> setStaffHistory(
     StaffAttendanceEntry staffEntry,

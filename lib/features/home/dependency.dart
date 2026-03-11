@@ -8,10 +8,11 @@ import 'package:staff_app/features/home/data/repositories/home_repository_impl.d
 import 'package:staff_app/features/home/domain/entities/attendance.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
-import 'package:staff_app/features/home/domain/usescases/get_attendance_entry_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/get_staff_location_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
-import 'package:staff_app/features/home/presentation/controllers/attendance_entry_controller.dart';
+import 'package:staff_app/features/home/presentation/controllers/staff_location_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_shift_controller.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
 
 final firebaseStoreageInstanceProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
@@ -34,10 +35,6 @@ final homeRepositoryProvider = Provider<HomeRepository>(
   ),
 );
 
-final attendanceEntryUsecaseProvider = Provider<AttendanceEntryUsecase>(
-  (ref) => AttendanceEntryUsecase(repository: ref.read(homeRepositoryProvider)),
-);
-
 final getStaffShiftUsecaseProvider = Provider<GetStaffShiftUsecase>(
   (ref) => GetStaffShiftUsecase(repository: ref.read(homeRepositoryProvider)),
 );
@@ -47,8 +44,12 @@ final getstaffShiftProvider =
       () => StaffShiftController(),
     );
 
-final attendanceEntryControllerProvider =
-    StreamNotifierProvider.autoDispose<
-      AttendanceEntryController,
-      AsyncValue<Attendance>
-    >(() => AttendanceEntryController());
+final getStaffLocationUsecaseProvider = Provider(
+  (ref) =>
+      GetStaffLocationUsecase(repository: ref.read(homeRepositoryProvider)),
+);
+
+final staffLocationControllerProvider =
+    StreamNotifierProvider.autoDispose<StaffLocationController, LocationState>(
+      () => StaffLocationController(),
+    );
