@@ -1,5 +1,5 @@
 class StaffStatusModel {
-  final bool status;
+  final String status;
 
   StaffStatusModel({required this.status});
 

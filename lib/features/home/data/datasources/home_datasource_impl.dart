@@ -69,14 +69,14 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       if (result == null || result.isEmpty) {
         print("No Data Found , HomeDatasource - getStaffHistory");
-        throw ServerException(message: "No Data Found");
+        return StaffHistoryModel(clockIn: null, clockOut: null);
       }
 
       final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
 
       if (yearResult == null || yearResult.isEmpty) {
         print("No Data Found , HomeDatasource - getStaffHistory");
-        throw ServerException(message: "No Data For this year");
+        return StaffHistoryModel(clockIn: null, clockOut: null);
       }
 
       final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
@@ -85,18 +85,16 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       if (monthResult == null || monthResult.isEmpty) {
         print("No Data Found , HomeDatasource - getStaffHistory");
-        throw ServerException(message: "No Data For this month");
+        return StaffHistoryModel(clockIn: null, clockOut: null);
       }
 
       final Map<String, dynamic>? dateResult = monthResult["${dateTime.day}"];
 
       if (dateResult == null || dateResult.isEmpty) {
         print("No Data Found , HomeDatasource - getStaffHistory");
-        throw ServerException(message: "No Data For this date");
+        return StaffHistoryModel(clockIn: null, clockOut: null);
       }
       return StaffHistoryModel.fromJson(dateResult);
-
-      // return StaffHistoryModel.fromJson(data);
     } catch (e) {
       throw ServerException(message: e.toString());
     }

@@ -1,16 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
-import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
 import 'package:staff_app/features/home/dependency.dart';
-import 'package:staff_app/features/home/domain/entities/staff_history.dart';
-import 'package:staff_app/features/home/presentation/controllers/attendance_entry_controller.dart';
+import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
 
 class TestScreen extends ConsumerWidget {
   const TestScreen({super.key});
@@ -29,14 +25,26 @@ class TestScreen extends ConsumerWidget {
       locationService: GeolocatorService(),
     );
 
+    final getstaffhistoryUsecase = GetStaffAttendanceStatusUsecase(
+      repository: ref.read(homeRepositoryProvider),
+    );
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
             onPressed: () async {
-              final data = await datasources.getStaffHistory(DateTime.now());
-              print(data);
+              final u = await getstaffhistoryUsecase(
+                GetStaffAttendanceStatusUsecaseParams(
+                  currentTime: DateTime.now(),
+                ),
+              );
+
+              u.fold((l) => print(l), (r) => print(r));
+
+              // final data = await datasources.getStaffHistory(DateTime.now());
+              // print(data);
             },
             child: Text("get history"),
           ),
@@ -53,13 +61,7 @@ class TestScreen extends ConsumerWidget {
             child: Text("set history"),
           ),
           const SizedBox(height: 20),
-          Center(
-            child: a.when(
-              data: (data) => Text("${data.value?.inPremises}"),
-              error: (error, stackTrace) => Text("$error"),
-              loading: () => CircularProgressIndicator(),
-            ),
-          ),
+          Center(child: Text("DAta")),
         ],
       ),
     );

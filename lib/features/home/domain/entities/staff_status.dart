@@ -1,7 +1,7 @@
 import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 
 class StaffStatus {
-  final bool status;
+  final String status;
 
   StaffStatus({required this.status});
 
