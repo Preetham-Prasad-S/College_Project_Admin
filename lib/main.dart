@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/base_screen.dart';
 import 'package:staff_app/firebase_options.dart';
 import 'package:staff_app/login_screen.dart';
 import 'package:staff_app/test_screen.dart';

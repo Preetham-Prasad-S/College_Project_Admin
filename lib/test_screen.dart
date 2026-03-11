@@ -35,11 +35,22 @@ class TestScreen extends ConsumerWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              datasources.setStaffHistory(
-                StaffAttendanceEntryModel(entry: DateTime.now(), type: "clock_out"),
+              final data = await datasources.getStaffHistory(DateTime.now());
+              print(data);
+            },
+            child: Text("get history"),
+          ),
+
+          ElevatedButton(
+            onPressed: () async {
+              await datasources.setStaffHistory(
+                StaffAttendanceEntryModel(
+                  entry: DateTime.now(),
+                  type: "clock_out",
+                ),
               );
             },
-            child: Text("Press Me Hard Daddy"),
+            child: Text("set history"),
           ),
           const SizedBox(height: 20),
           Center(

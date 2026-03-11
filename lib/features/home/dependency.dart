@@ -8,7 +8,7 @@ import 'package:staff_app/features/home/data/repositories/home_repository_impl.d
 import 'package:staff_app/features/home/domain/entities/attendance.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
-import 'package:staff_app/features/home/domain/usescases/attendance_entry_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/get_attendance_entry_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
 import 'package:staff_app/features/home/presentation/controllers/attendance_entry_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_shift_controller.dart';

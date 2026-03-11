@@ -1,6 +1,6 @@
 class StaffHistoryModel {
-  final DateTime? clockIn;
-  final DateTime? clockOut;
+  final DateTime clockIn;
+  final DateTime clockOut;
 
   StaffHistoryModel({required this.clockIn, required this.clockOut});
 

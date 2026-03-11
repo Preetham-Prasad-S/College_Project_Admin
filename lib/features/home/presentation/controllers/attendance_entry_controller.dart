@@ -4,7 +4,7 @@ import 'package:staff_app/core/usecases/usecase.dart';
 import 'package:staff_app/features/home/dependency.dart';
 import 'package:staff_app/features/home/domain/entities/attendance.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
-import 'package:staff_app/features/home/domain/usescases/attendance_entry_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/get_attendance_entry_usecase.dart';
 
 class AttendanceEntryController extends StreamNotifier<AsyncValue<Attendance>> {
   @override
@@ -12,7 +12,7 @@ class AttendanceEntryController extends StreamNotifier<AsyncValue<Attendance>> {
     final attendanceEntryUsecase = ref.read(attendanceEntryUsecaseProvider);
 
     final result = attendanceEntryUsecase(
-      AttendanceEntryParams(dateTime: DateTime(2023, 1, 1)),
+      AttendanceEntryParams(dateTime: DateTime.now()),
     );
 
     return result.map((attendance) {

@@ -67,23 +67,34 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       final result = staffHistory.data();
 
-      // if (result == null) {
-      //   throw ServerException(message: "No Data Flutter");
-      // }
+      if (result == null || result.isEmpty) {
+        print("No Data Found , HomeDatasource - getStaffHistory");
+        throw ServerException(message: "No Data Found");
+      }
 
-      // final data =
-      //     result["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"]["clock_in"];
+      final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
 
-      // final Map<String, dynamic>? data =
-      //     staffHistory["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"];
+      if (yearResult == null || yearResult.isEmpty) {
+        print("No Data Found , HomeDatasource - getStaffHistory");
+        throw ServerException(message: "No Data For this year");
+      }
 
-      // if (data == null) {
-      //   throw ServerException(message: "Error in getting staff history");
-      // }
+      final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
 
-      // print(data);
+      print(monthResult);
 
-      return StaffHistoryModel(clockIn: null, clockOut: null);
+      if (monthResult == null || monthResult.isEmpty) {
+        print("No Data Found , HomeDatasource - getStaffHistory");
+        throw ServerException(message: "No Data For this month");
+      }
+
+      final Map<String, dynamic>? dateResult = monthResult["${dateTime.day}"];
+
+      if (dateResult == null || dateResult.isEmpty) {
+        print("No Data Found , HomeDatasource - getStaffHistory");
+        throw ServerException(message: "No Data For this date");
+      }
+      return StaffHistoryModel.fromJson(dateResult);
 
       // return StaffHistoryModel.fromJson(data);
     } catch (e) {
@@ -94,20 +105,6 @@ class HomeDatasourceImpl implements HomeDatasource {
   @override
   Future<void> setStaffHistory(StaffAttendanceEntryModel model) async {
     try {
-      final data = await _firebaseInstance
-          .collection("history")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      final result = data.data();
-
-      if (result == null || result.isEmpty) {
-        await _firebaseInstance
-            .collection("history")
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .set(model.toJson(), SetOptions(merge: true));
-      }
-
       await _firebaseInstance
           .collection("history")
           .doc(FirebaseAuth.instance.currentUser!.uid)

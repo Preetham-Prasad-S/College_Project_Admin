@@ -96,7 +96,9 @@ class _HomeAttendanceEntryCardWidgetState
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: Color.fromRGBO(99, 255, 156, 1),
+                          color: data.value!.isClockedIn
+                              ? Color.fromRGBO(99, 255, 156, 1)
+                              : const Color.fromRGBO(255, 178, 34, 1),
                         ),
                         height: 10,
                         width: 10,
@@ -177,7 +179,7 @@ class _HomeAttendanceEntryCardWidgetState
                 ),
               ),
               loading: () => Text(
-                "Getting Shift Details........",
+                "Getting Shift Details",
                 style: TextStyle(
                   height: 2,
                   color: const Color.fromRGBO(255, 255, 255, 0.7),
