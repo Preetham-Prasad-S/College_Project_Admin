@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/college_location_model.dart';
+import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
@@ -63,21 +65,34 @@ class HomeDatasourceImpl implements HomeDatasource {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
-      final Map<String, dynamic>? data =
-          staffHistory["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"];
+      final result = staffHistory.data();
 
-      if (data == null) {
-        throw ServerException(message: "Error in getting staff history");
-      }
+      // if (result == null) {
+      //   throw ServerException(message: "No Data Flutter");
+      // }
 
-      return StaffHistoryModel.fromJson(data);
+      // final data =
+      //     result["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"]["clock_in"];
+
+      // final Map<String, dynamic>? data =
+      //     staffHistory["staff_history"]["${dateTime.year}"]["${dateTime.month}"]["${dateTime.day}"];
+
+      // if (data == null) {
+      //   throw ServerException(message: "Error in getting staff history");
+      // }
+
+      // print(data);
+
+      return StaffHistoryModel(clockIn: null, clockOut: null);
+
+      // return StaffHistoryModel.fromJson(data);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
   }
 
   @override
-  Future<void> setStaffHistory(StaffHistoryModel model) async {
+  Future<void> setStaffHistory(StaffAttendanceEntryModel model) async {
     try {
       final data = await _firebaseInstance
           .collection("history")
@@ -86,7 +101,19 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       final result = data.data();
 
-      print(result);
+      if (result == null || result.isEmpty) {
+        await _firebaseInstance
+            .collection("history")
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .set(model.toJson(), SetOptions(merge: true));
+      }
+
+      await _firebaseInstance
+          .collection("history")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(model.toJson(), SetOptions(merge: true));
+
+      // final result = data.data();
 
       // if (result == null) {
       //   throw ServerException(message: "No Correct key found in DB");

@@ -3,7 +3,9 @@ import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
+import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
+import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
 import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/entities/staff_status.dart';
@@ -76,6 +78,21 @@ class HomeRepositoryImpl implements HomeRepository {
       final staffHistory = await dataSource.getStaffHistory(dateTime);
 
       return right(StaffHistory.fromModel(staffHistory));
+    } on ServerException catch (e) {
+      return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AppFailure, void>> setStaffHistory(
+    StaffAttendanceEntry staffEntry,
+  ) async {
+    try {
+      await dataSource.setStaffHistory(staffEntry.toModel());
+
+      return right(null);
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {

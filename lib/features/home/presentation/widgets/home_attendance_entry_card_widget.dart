@@ -194,9 +194,13 @@ class _HomeAttendanceEntryCardWidgetState
                 color: Color.fromRGBO(255, 255, 255, 0.25),
               ),
               child: attendanceCardState.when(
-                data: (data) => InPremisesWidget(
-                  state: data.value!.inPremises ? "true" : "false",
-                ),
+                data: (data) {
+                  print(data.value!.inPremises);
+
+                  return InPremisesWidget(
+                    state: data.value!.inPremises ? "true" : "false",
+                  );
+                },
                 error: (error, stackTrace) => InPremisesWidget(state: "error"),
                 loading: () => InPremisesWidget(state: "loading"),
               ),
@@ -235,7 +239,11 @@ class InPremisesWidget extends StatelessWidget {
         const SizedBox(width: 10),
 
         Text(
-          "ERROR IN FETCHING LOCATION",
+          state == "true"
+              ? "INSIDE COLLEGE PRIMESIS"
+              : state == "loading"
+              ? "GETTING GEOLOCATION"
+              : "NOT IN COLLEGE CAMPUS",
           style: TextStyle(color: Colors.white, fontSize: 12),
         ),
       ],

@@ -51,4 +51,4 @@ final attendanceEntryControllerProvider =
     StreamNotifierProvider.autoDispose<
       AttendanceEntryController,
       AsyncValue<Attendance>
-    >(AttendanceEntryController.new);
+    >(() => AttendanceEntryController());

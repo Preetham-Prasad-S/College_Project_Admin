@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
+import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
 import 'package:staff_app/features/home/dependency.dart';
 import 'package:staff_app/features/home/domain/entities/staff_history.dart';
+import 'package:staff_app/features/home/presentation/controllers/attendance_entry_controller.dart';
 
 class TestScreen extends ConsumerWidget {
   const TestScreen({super.key});
@@ -32,13 +35,8 @@ class TestScreen extends ConsumerWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              HomeDatasourceImpl(
-                firebaseInstance: FirebaseFirestore.instance,
-              ).setStaffHistory(
-                StaffHistoryModel(
-                  clockIn: DateTime.now(),
-                  clockOut: DateTime.now(),
-                ),
+              datasources.setStaffHistory(
+                StaffAttendanceEntryModel(entry: DateTime.now(), type: "clock_out"),
               );
             },
             child: Text("Press Me Hard Daddy"),
