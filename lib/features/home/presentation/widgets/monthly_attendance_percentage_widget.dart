@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/features/home/dependency.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/attendance_percentage_state.dart';
 
-class MonthlyAttendancePercentageWidget extends StatelessWidget {
+class MonthlyAttendancePercentageWidget extends ConsumerWidget {
   const MonthlyAttendancePercentageWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Card(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final attendancePercentage = ref.watch(
+      attendancePercentageControllerProvider,
+    );
+    return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
         side: BorderSide(color: Color.fromRGBO(215, 226, 243, 1), width: 1.5),
@@ -54,7 +60,16 @@ class MonthlyAttendancePercentageWidget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "92%",
+                      attendancePercentage.when(
+                        data: (data) {
+                          if (data is AttendancePercentageDataState) {
+                            return "${data.percentage} %";
+                          }
+                          return "--";
+                        },
+                        error: (error, stackTrace) => "--",
+                        loading: () => "--",
+                      ),
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -70,7 +85,16 @@ class MonthlyAttendancePercentageWidget extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 minHeight: 6,
                 color: Color.fromRGBO(19, 109, 236, 1),
-                value: 0.92,
+                value: attendancePercentage.when(
+                  data: (data) {
+                    if (data is AttendancePercentageDataState) {
+                      return data.percentage / 100;
+                    }
+                    return 0;
+                  },
+                  error: (error, stackTrace) => 0,
+                  loading: () => 0,
+                ),
               ),
             ),
           ],

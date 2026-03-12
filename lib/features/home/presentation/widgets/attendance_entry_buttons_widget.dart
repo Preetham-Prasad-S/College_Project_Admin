@@ -45,6 +45,7 @@ class AttendanceEntryButtonsWidget extends ConsumerWidget {
                   .read(staffAttendanceStatusControllerProvider.notifier)
                   .attendancEntry("clock_in");
               ref.refresh(staffAttendanceStatusControllerProvider);
+              ref.refresh(attendancePercentageControllerProvider);
             }
           },
           child: Row(
@@ -100,6 +101,7 @@ class AttendanceEntryButtonsWidget extends ConsumerWidget {
                   .read(staffAttendanceStatusControllerProvider.notifier)
                   .attendancEntry("clock_out");
               ref.refresh(staffAttendanceStatusControllerProvider);
+              ref.refresh(attendancePercentageControllerProvider);
             }
           },
           child: Row(

@@ -3,12 +3,12 @@ import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
-import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
+
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
 import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
 import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
-import 'package:staff_app/features/home/domain/entities/staff_status.dart';
+
 import 'package:staff_app/features/home/domain/entities/working_days.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 
