@@ -29,12 +29,19 @@ class TestScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final homeDatasource = await HomeDatasourceImpl(
-                  firebaseInstance: FirebaseFirestore.instance,
+                final homeRepository = await HomeRepositoryImpl(
+                  dataSource: HomeDatasourceImpl(
+                    firebaseInstance: FirebaseFirestore.instance,
+                  ),
+                  locationService: GeolocatorService(),
                 ).getWorkingDays(DateTime.now());
 
-                print(homeDatasource.workingDays);
+                homeRepository.fold(
+                  (l) => print(l),
+                  (r) => print(r.workingDays),
+                );
               },
+
               child: Text("Get Working Days"),
             ),
           ],

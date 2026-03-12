@@ -9,6 +9,7 @@ import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.d
 import 'package:staff_app/features/home/domain/entities/staff_history.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/entities/staff_status.dart';
+import 'package:staff_app/features/home/domain/entities/working_days.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
@@ -80,6 +81,21 @@ class HomeRepositoryImpl implements HomeRepository {
       await dataSource.setStaffHistory(staffEntry.toModel());
 
       return right(null);
+    } on ServerException catch (e) {
+      return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AppFailure, WorkingDays>> getWorkingDays(
+    DateTime dateTime,
+  ) async {
+    try {
+      final workingDays = await dataSource.getWorkingDays(dateTime);
+
+      return right(WorkingDays.fromModel(workingDays));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {
