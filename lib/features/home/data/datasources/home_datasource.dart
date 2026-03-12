@@ -6,8 +6,9 @@ import 'package:staff_app/features/home/data/models/working_days_model.dart';
 
 abstract interface class HomeDatasource {
   Future<WorkingDaysModel> getWorkingDays(DateTime dateTime);
+  Future<WorkingDaysModel> getAttendedDays(DateTime dateTime);
   Future<StaffShiftModel> getStaffShift();
   Future<CollegeLocationModel> getCollegeLocation();
-  Future<StaffHistoryModel> getStaffHistory(DateTime dateTime);
-  Future<void> setStaffHistory(StaffAttendanceEntryModel model);
+  Future<StaffHistoryModel> getStaffStatus(DateTime dateTime);
+  Future<void> setStaffStatus(StaffAttendanceEntryModel model);
 }

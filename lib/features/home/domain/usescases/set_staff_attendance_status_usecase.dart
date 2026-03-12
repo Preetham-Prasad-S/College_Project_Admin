@@ -15,7 +15,7 @@ class SetStaffAttendanceStatusUsecase
   Future<Either<AppFailure, void>> call(
     SetStaffAttendanceStatusUsecaseParmas params,
   ) async {
-    return await _repository.setStaffHistory(params.staffEntry);
+    return await _repository.setStaffStatus(params.staffEntry);
   }
 }
 

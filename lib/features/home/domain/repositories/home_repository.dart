@@ -10,9 +10,10 @@ abstract interface class HomeRepository {
   Stream<Either<AppFailure, CollegeLocation>> currentLocation();
   Future<Either<AppFailure, CollegeLocation>> getCollegeLocation();
   Future<Either<AppFailure, StaffShift>> getStaffShift();
-  Future<Either<AppFailure, StaffHistory>> getStaffHistory(DateTime dateTime);
-  Future<Either<AppFailure, void>> setStaffHistory(
+  Future<Either<AppFailure, StaffHistory>> getStaffStatus(DateTime dateTime);
+  Future<Either<AppFailure, void>> setStaffStatus(
     StaffAttendanceEntry staffEntry,
   );
   Future<Either<AppFailure, WorkingDays>> getWorkingDays(DateTime dateTime);
+  Future<Either<AppFailure, WorkingDays>> getAttendedDays(DateTime dateTime);
 }

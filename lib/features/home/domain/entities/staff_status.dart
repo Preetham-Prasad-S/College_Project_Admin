@@ -1,4 +1,3 @@
-import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/domain/enums/staff_status_enum.dart';
 
 class StaffStatus {

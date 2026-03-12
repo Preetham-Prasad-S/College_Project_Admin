@@ -10,7 +10,7 @@ import 'package:staff_app/features/home/domain/repositories/home_repository.dart
 import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_location_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
-import 'package:staff_app/features/home/domain/usescases/get_working_days_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/get_attendance_percentage_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/set_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_attendance_status_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_location_controller.dart';
@@ -76,5 +76,7 @@ final setStaffAttendanceStatusUsecaseProvider = Provider(
 );
 
 final getWorkingDaysUsecaseProvider = Provider(
-  (ref) => GetWorkingDaysUsecase(repository: ref.read(homeRepositoryProvider)),
+  (ref) => GetAttendancePercentageUsecase(
+    repository: ref.read(homeRepositoryProvider),
+  ),
 );

@@ -6,10 +6,8 @@ import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/college_location_model.dart';
 import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
-import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
 import 'package:staff_app/features/home/data/models/working_days_model.dart';
-import 'package:staff_app/features/home/dependency.dart';
 
 class HomeDatasourceImpl implements HomeDatasource {
   final FirebaseFirestore _firebaseInstance;
@@ -45,7 +43,7 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<StaffHistoryModel> getStaffHistory(DateTime dateTime) async {
+  Future<StaffHistoryModel> getStaffStatus(DateTime dateTime) async {
     try {
       final staffHistory = await _firebaseInstance
           .collection("history")
@@ -66,8 +64,6 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
 
-      print(monthResult);
-
       if (monthResult == null || monthResult.isEmpty) {
         return StaffHistoryModel(clockIn: null, clockOut: null);
       }
@@ -84,7 +80,7 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<void> setStaffHistory(StaffAttendanceEntryModel model) async {
+  Future<void> setStaffStatus(StaffAttendanceEntryModel model) async {
     try {
       await _firebaseInstance
           .collection("history")
@@ -121,5 +117,37 @@ class HomeDatasourceImpl implements HomeDatasource {
     }
 
     return WorkingDaysModel(workingDays: monthData);
+  }
+
+  @override
+  Future<WorkingDaysModel> getAttendedDays(DateTime dateTime) async {
+    try {
+      final attendedDays = await _firebaseInstance
+          .collection("history")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      final result = attendedDays.data();
+
+      if (result == null || result.isEmpty) {
+        return WorkingDaysModel(workingDays: null);
+      }
+
+      final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
+
+      if (yearResult == null || yearResult.isEmpty) {
+        return WorkingDaysModel(workingDays: null);
+      }
+
+      final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
+
+      if (monthResult == null || monthResult.isEmpty) {
+        return WorkingDaysModel(workingDays: null);
+      }
+
+      return WorkingDaysModel(workingDays: monthResult.length);
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
   }
 }
