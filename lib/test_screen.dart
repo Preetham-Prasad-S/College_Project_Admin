@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
@@ -6,63 +7,66 @@ import 'package:staff_app/features/home/data/datasources/home_datasource_impl.da
 import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
 import 'package:staff_app/features/home/dependency.dart';
+import 'package:staff_app/features/home/domain/entities/attendance.dart';
+import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/set_staff_attendance_status_usecase.dart';
+import 'package:staff_app/features/home/presentation/controllers/staff_attendance_status_controller.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
 
 class TestScreen extends ConsumerWidget {
   const TestScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final a = ref.watch(attendanceEntryControllerProvider);
-    final ac = ref.read(attendanceEntryControllerProvider.notifier);
+    final attendanceStatus = ref.watch(staffAttendanceStatusControllerProvider);
 
-    final datasources = HomeDatasourceImpl(
-      firebaseInstance: FirebaseFirestore.instance,
-    );
-
-    final repo = HomeRepositoryImpl(
-      dataSource: datasources,
-      locationService: GeolocatorService(),
-    );
-
-    final getstaffhistoryUsecase = GetStaffAttendanceStatusUsecase(
-      repository: ref.read(homeRepositoryProvider),
-    );
+    final locationStatus = ref.watch(staffLocationControllerProvider);
 
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              final u = await getstaffhistoryUsecase(
-                GetStaffAttendanceStatusUsecaseParams(
-                  currentTime: DateTime.now(),
-                ),
-              );
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
 
-              u.fold((l) => print(l), (r) => print(r));
+            ElevatedButton(
+              onPressed: () async {
+                locationStatus.when(
+                  data: (data) {
+                    if (data is LocationDataState) {
+                      print("Inside Location : ${data.inCampus}");
 
-              // final data = await datasources.getStaffHistory(DateTime.now());
-              // print(data);
-            },
-            child: Text("get history"),
-          ),
-
-          ElevatedButton(
-            onPressed: () async {
-              await datasources.setStaffHistory(
-                StaffAttendanceEntryModel(
-                  entry: DateTime.now(),
-                  type: "clock_out",
-                ),
-              );
-            },
-            child: Text("set history"),
-          ),
-          const SizedBox(height: 20),
-          Center(child: Text("DAta")),
-        ],
+                      if (data.inCampus) {
+                        attendanceStatus.when(
+                          data: (data) {
+                            if (data is StaffStatusClockedInState) {
+                              print(data);
+                            } else if (data is StaffStatusClockedOutState) {
+                              print(data);
+                            } else {
+                              print(data);
+                            }
+                          },
+                          error: (error, stackTrace) {},
+                          loading: () {},
+                        );
+                      } else {
+                        print(data);
+                      }
+                    } else {
+                      print("Inside Location: $data");
+                    }
+                  },
+                  error: (error, stackTrace) {},
+                  loading: () {},
+                );
+              },
+              child: Text("Set History"),
+            ),
+          ],
+        ),
       ),
     );
   }

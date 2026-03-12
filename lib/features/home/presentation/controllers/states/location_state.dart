@@ -12,4 +12,3 @@ final class LocationErrorState implements LocationState {
   LocationErrorState({required this.errorMessage});
 }
 
-final class LocationLoadingState implements LocationState {}
