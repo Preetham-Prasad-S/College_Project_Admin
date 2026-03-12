@@ -3,26 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:staff_app/features/home/dependency.dart';
-import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
-import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
-import 'package:staff_app/features/home/presentation/widgets/attendance_entry_buttons_widget.dart';
-import 'package:staff_app/features/home/presentation/widgets/in_premises_widget.dart';
-import 'package:staff_app/features/home/presentation/widgets/live_clock_widget.dart';
 
-class HomeAttendanceEntryCardWidget extends ConsumerWidget {
+class HomeAttendanceEntryCardWidget extends ConsumerStatefulWidget {
   const HomeAttendanceEntryCardWidget({super.key});
+
+  @override
+  ConsumerState<HomeAttendanceEntryCardWidget> createState() =>
+      _HomeAttendanceEntryCardWidgetState();
+}
+
+class _HomeAttendanceEntryCardWidgetState
+    extends ConsumerState<HomeAttendanceEntryCardWidget> {
+  late Timer tick;
+  String currentTime = DateFormat("hh:mm a").format(DateTime.now());
+
+  @override
+  void initState() {
+    super.initState();
+    tick = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) => setState(() {
+        currentTime = DateFormat("hh:mm a").format(DateTime.now());
+      }),
+    );
+  }
 
   String currentDate() {
     return DateFormat("EEE, dd MMM yyyy").format(DateTime.now());
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final locationState = ref.watch(staffLocationControllerProvider);
-    final staffShiftState = ref.watch(getStaffShiftControllerProvider);
-    final staffAttendanceStatusState = ref.watch(
-      staffAttendanceStatusControllerProvider,
-    );
+  void dispose() {
+    tick.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final attendanceCardState = ref.watch(attendanceEntryControllerProvider);
+    final staffShift = ref.watch(getstaffShiftProvider);
 
     return Container(
       decoration: BoxDecoration(
@@ -53,7 +72,15 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
               currentDate(),
               style: TextStyle(color: Colors.white, height: 1),
             ),
-            const LiveClock(),
+            Text(
+              currentTime,
+              style: TextStyle(
+                height: 1.2,
+                color: Colors.white,
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 2),
               decoration: const BoxDecoration(
@@ -62,33 +89,29 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
               ),
               child: SizedBox(
                 width: 200,
-                child: staffAttendanceStatusState.when(
-                  data: (data) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: data is StaffStatusClockedInState
-                                ? Color.fromRGBO(99, 255, 156, 1)
-                                : const Color.fromRGBO(255, 178, 34, 1),
-                          ),
-                          height: 10,
-                          width: 10,
+                child: attendanceCardState.when(
+                  data: (data) => Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: data.value!.isClockedIn
+                              ? Color.fromRGBO(99, 255, 156, 1)
+                              : const Color.fromRGBO(255, 178, 34, 1),
                         ),
-                        const SizedBox(width: 10),
-                        Text(
-                          data is StaffStatusClockedInState
-                              ? "Currently Clocked In"
-                              : data is StaffStatusClockedOutState
-                              ? "Currently Clocked Out"
-                              : "Session Completed",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    );
-                  },
+                        height: 10,
+                        width: 10,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        data.value!.isClockedIn
+                            ? "Currently Clocked In"
+                            : "Currently Clocked Out",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                   error: (error, stackTrace) => Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -131,62 +154,16 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
             const SizedBox(height: 15),
             SizedBox(
               height: 80,
-              child: locationState.when(
-                data: (location) {
-                  if (location is LocationDataState) {
-                    if (location.inCampus) {
-                      return staffAttendanceStatusState.when(
-                        data: (data) {
-                          if (data is StaffStatusClockedInState) {
-                            return AttendanceEntryButtonsWidget(
-                              clockedInstate: false,
-                              clockedOutstate: true,
-                            );
-                          } else if (data is StaffStatusClockedOutState) {
-                            return AttendanceEntryButtonsWidget(
-                              clockedInstate: true,
-                              clockedOutstate: false,
-                            );
-                          }
-                          return AttendanceEntryButtonsWidget(
-                            clockedInstate: false,
-                            clockedOutstate: false,
-                          );
-                        },
-                        error: (error, stackTrace) =>
-                            AttendanceEntryButtonsWidget(
-                              clockedInstate: false,
-                              clockedOutstate: false,
-                            ),
-                        loading: () => AttendanceEntryButtonsWidget(
-                          clockedInstate: false,
-                          clockedOutstate: false,
-                        ),
-                      );
-                    }
-                    return AttendanceEntryButtonsWidget(
-                      clockedInstate: false,
-                      clockedOutstate: false,
-                    );
-                  }
-                  return AttendanceEntryButtonsWidget(
-                    clockedInstate: false,
-                    clockedOutstate: false,
-                  );
-                },
-                error: (error, stackTrace) => AttendanceEntryButtonsWidget(
-                  clockedInstate: false,
-                  clockedOutstate: false,
-                ),
-                loading: () => AttendanceEntryButtonsWidget(
-                  clockedInstate: false,
-                  clockedOutstate: false,
-                ),
+              child: attendanceCardState.when(
+                data: (data) => AttendanceEntryButtonsWidget(state: true),
+                loading: () => AttendanceEntryButtonsWidget(state: false),
+                error: (error, stackTrace) =>
+                    AttendanceEntryButtonsWidget(state: false),
               ),
             ),
             SizedBox(height: 10),
 
-            staffShiftState.when(
+            staffShift.when(
               data: (data) => Text(
                 "Shift : ${DateFormat("hh:mm a").format(data.value!.start)} - ${DateFormat("hh:mm a").format(data.value!.end)}",
                 style: TextStyle(
@@ -218,12 +195,12 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 color: Color.fromRGBO(255, 255, 255, 0.25),
               ),
-              child: locationState.when(
+              child: attendanceCardState.when(
                 data: (data) {
-                  data as LocationDataState;
+                  print(data.value!.inPremises);
 
                   return InPremisesWidget(
-                    state: data.inCampus ? "true" : "false",
+                    state: data.value!.inPremises ? "true" : "false",
                   );
                 },
                 error: (error, stackTrace) => InPremisesWidget(state: "error"),
@@ -234,6 +211,153 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class InPremisesWidget extends StatelessWidget {
+  final String state;
+
+  const InPremisesWidget({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: state == "true"
+                ? Color.fromRGBO(99, 255, 156, 1)
+                : state == "loading"
+                ? Color.fromRGBO(255, 245, 99, 1)
+                : const Color.fromARGB(255, 255, 55, 41),
+
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          height: 10,
+          width: 10,
+        ),
+        const SizedBox(width: 10),
+
+        Text(
+          state == "true"
+              ? "INSIDE COLLEGE PRIMESIS"
+              : state == "loading"
+              ? "GETTING GEOLOCATION"
+              : "NOT IN COLLEGE CAMPUS",
+          style: TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ],
+    );
+  }
+}
+
+class AttendanceEntryButtonsWidget extends StatelessWidget {
+  final bool state;
+
+  const AttendanceEntryButtonsWidget({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          style: ButtonStyle(
+            side: WidgetStatePropertyAll(
+              BorderSide(
+                color: state
+                    ? const Color.fromRGBO(0, 0, 0, 0)
+                    : Color.fromRGBO(255, 255, 255, 0.2),
+              ),
+            ),
+            backgroundColor: WidgetStatePropertyAll(
+              state
+                  ? const Color.fromRGBO(255, 255, 255, 1)
+                  : Color.fromRGBO(255, 255, 255, 0.1),
+            ),
+            elevation: WidgetStatePropertyAll(0),
+            fixedSize: WidgetStatePropertyAll(Size(150, 60)),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
+              ),
+            ),
+          ),
+          onPressed: () {},
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.login,
+                size: 20,
+                color: state
+                    ? Color.fromRGBO(19, 109, 236, 1)
+                    : Color.fromRGBO(255, 255, 255, 0.3),
+              ),
+              SizedBox(width: 10),
+              Text(
+                "Clock In",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: state
+                      ? Color.fromRGBO(19, 109, 236, 1)
+                      : Color.fromRGBO(255, 255, 255, 0.3),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 15),
+        ElevatedButton(
+          style: ButtonStyle(
+            side: WidgetStatePropertyAll(
+              BorderSide(
+                color: state
+                    ? const Color.fromRGBO(0, 0, 0, 0)
+                    : Color.fromRGBO(255, 255, 255, 0.2),
+              ),
+            ),
+            backgroundColor: WidgetStatePropertyAll(
+              state
+                  ? const Color.fromRGBO(255, 255, 255, 1)
+                  : Color.fromRGBO(255, 255, 255, 0.1),
+            ),
+            elevation: WidgetStatePropertyAll(0),
+            fixedSize: WidgetStatePropertyAll(Size(150, 60)),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
+              ),
+            ),
+          ),
+          onPressed: () {},
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.login,
+                size: 20,
+                color: state
+                    ? const Color.fromARGB(255, 255, 55, 41)
+                    : Color.fromRGBO(255, 255, 255, 0.3),
+              ),
+              SizedBox(width: 10),
+              Text(
+                "Clock Out",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: state
+                      ? const Color.fromARGB(255, 255, 55, 41)
+                      : Color.fromRGBO(255, 255, 255, 0.3),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
