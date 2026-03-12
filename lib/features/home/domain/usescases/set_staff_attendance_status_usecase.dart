@@ -15,12 +15,7 @@ class SetStaffAttendanceStatusUsecase
   Future<Either<AppFailure, void>> call(
     SetStaffAttendanceStatusUsecaseParmas params,
   ) async {
-    final setHistory = await _repository.setStaffHistory(params.staffEntry);
-
-    return setHistory.fold(
-      (AppFailure failure) => left(AppFailure(message: failure.message)),
-      (_) => right(null),
-    );
+    return await _repository.setStaffHistory(params.staffEntry);
   }
 }
 
