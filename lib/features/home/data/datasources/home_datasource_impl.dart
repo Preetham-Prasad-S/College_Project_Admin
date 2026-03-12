@@ -68,14 +68,12 @@ class HomeDatasourceImpl implements HomeDatasource {
       final result = staffHistory.data();
 
       if (result == null || result.isEmpty) {
-        print("No Data Found , HomeDatasource - getStaffHistory");
         return StaffHistoryModel(clockIn: null, clockOut: null);
       }
 
       final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
 
       if (yearResult == null || yearResult.isEmpty) {
-        print("No Data Found , HomeDatasource - getStaffHistory");
         return StaffHistoryModel(clockIn: null, clockOut: null);
       }
 
@@ -84,14 +82,12 @@ class HomeDatasourceImpl implements HomeDatasource {
       print(monthResult);
 
       if (monthResult == null || monthResult.isEmpty) {
-        print("No Data Found , HomeDatasource - getStaffHistory");
         return StaffHistoryModel(clockIn: null, clockOut: null);
       }
 
       final Map<String, dynamic>? dateResult = monthResult["${dateTime.day}"];
 
       if (dateResult == null || dateResult.isEmpty) {
-        print("No Data Found , HomeDatasource - getStaffHistory");
         return StaffHistoryModel(clockIn: null, clockOut: null);
       }
       return StaffHistoryModel.fromJson(dateResult);
@@ -107,26 +103,6 @@ class HomeDatasourceImpl implements HomeDatasource {
           .collection("history")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .set(model.toJson(), SetOptions(merge: true));
-
-      // final result = data.data();
-
-      // if (result == null) {
-      //   throw ServerException(message: "No Correct key found in DB");
-      // }
-
-      // result["staff_history"][model.clockIn.year][model.clockIn.month][model
-      //         .clockIn
-      //         .day]["clock_in"] =
-      //     model.clockIn.millisecondsSinceEpoch;
-
-      // result["staff_history"][model.clockOut.year][model.clockOut.month][model
-      //         .clockOut
-      //         .day]["clock_out"] =
-      //     model.clockIn.millisecondsSinceEpoch;
-      // await _firebaseInstance
-      //     .collection("history")
-      //     .doc(FirebaseAuth.instance.currentUser!.uid)
-      //     .set(result);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
