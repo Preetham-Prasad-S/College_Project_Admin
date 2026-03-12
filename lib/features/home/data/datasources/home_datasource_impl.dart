@@ -8,6 +8,7 @@ import 'package:staff_app/features/home/data/models/staff_attendance_entry_model
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
+import 'package:staff_app/features/home/data/models/working_days_model.dart';
 import 'package:staff_app/features/home/dependency.dart';
 
 class HomeDatasourceImpl implements HomeDatasource {
@@ -38,20 +39,6 @@ class HomeDatasourceImpl implements HomeDatasource {
           .doc("shift_details")
           .get();
       return StaffShiftModel.fromJson(staffShift["normal_shift"]);
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
-
-  @override
-  Future<StaffStatusModel> getStaffStatus() async {
-    try {
-      final staffStatus = await _firebaseInstance
-          .collection("staff_status")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      return StaffStatusModel.fromJson(staffStatus["status"]);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -106,5 +93,33 @@ class HomeDatasourceImpl implements HomeDatasource {
     } catch (e) {
       throw ServerException(message: e.toString());
     }
+  }
+
+  @override
+  Future<WorkingDaysModel> getWorkingDays(DateTime dateTime) async {
+    final workingDaysData = await _firebaseInstance
+        .collection("college")
+        .doc("working_days")
+        .get();
+
+    final data = workingDaysData.data();
+
+    if (data == null || data.isEmpty) {
+      return WorkingDaysModel(workingDays: null);
+    }
+
+    final Map<String, dynamic>? yearData = data["${dateTime.year}"];
+
+    if (yearData == null || yearData.isEmpty) {
+      return WorkingDaysModel(workingDays: null);
+    }
+
+    final int? monthData = yearData["${dateTime.month}"];
+
+    if (monthData == null) {
+      return WorkingDaysModel(workingDays: null);
+    }
+
+    return WorkingDaysModel(workingDays: monthData);
   }
 }

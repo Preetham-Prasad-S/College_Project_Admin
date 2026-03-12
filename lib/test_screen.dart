@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
+import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
@@ -20,50 +21,21 @@ class TestScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final attendanceStatus = ref.watch(staffAttendanceStatusControllerProvider);
-
-    final locationStatus = ref.watch(staffLocationControllerProvider);
-
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-
             ElevatedButton(
               onPressed: () async {
-                locationStatus.when(
-                  data: (data) {
-                    if (data is LocationDataState) {
-                      print("Inside Location : ${data.inCampus}");
+                final homeDatasource = await HomeDatasourceImpl(
+                  firebaseInstance: FirebaseFirestore.instance,
+                ).getWorkingDays(DateTime.now());
 
-                      if (data.inCampus) {
-                        attendanceStatus.when(
-                          data: (data) {
-                            if (data is StaffStatusClockedInState) {
-                              print(data);
-                            } else if (data is StaffStatusClockedOutState) {
-                              print(data);
-                            } else {
-                              print(data);
-                            }
-                          },
-                          error: (error, stackTrace) {},
-                          loading: () {},
-                        );
-                      } else {
-                        print(data);
-                      }
-                    } else {
-                      print("Inside Location: $data");
-                    }
-                  },
-                  error: (error, stackTrace) {},
-                  loading: () {},
-                );
+                print(homeDatasource.workingDays);
               },
-              child: Text("Set History"),
+              child: Text("Get Working Days"),
             ),
           ],
         ),
