@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:staff_app/core/failures.dart';
+import 'package:staff_app/features/home/domain/entities/college_holiday.dart';
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
 import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
 import 'package:staff_app/features/home/domain/entities/staff_history.dart';
@@ -14,6 +15,6 @@ abstract interface class HomeRepository {
   Future<Either<AppFailure, void>> setStaffStatus(
     StaffAttendanceEntry staffEntry,
   );
-  Future<Either<AppFailure, WorkingDays>> getWorkingDays(DateTime dateTime);
+  Future<Either<AppFailure, CollegeHolidays>> getHolidayDays(DateTime dateTime);
   Future<Either<AppFailure, WorkingDays>> getAttendedDays(DateTime dateTime);
 }

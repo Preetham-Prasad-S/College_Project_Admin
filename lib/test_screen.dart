@@ -18,6 +18,14 @@ class TestScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                // final d = HomeDatasourceImpl(
+                //   firebaseInstance: FirebaseFirestore.instance,
+                // );
+
+                // final dresult = await d.getHolidayDays(DateTime.now());
+
+                // print(dresult);
+
                 final u = GetAttendancePercentageUsecase(
                   repository: ref.watch(homeRepositoryProvider),
                 );

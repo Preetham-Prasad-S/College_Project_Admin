@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/college_location_model.dart';
+import 'package:staff_app/features/home/data/models/college_holidays_model.dart';
 import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
+import 'package:staff_app/features/home/data/models/staff_attendance_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
 import 'package:staff_app/features/home/data/models/working_days_model.dart';
@@ -92,31 +93,38 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<WorkingDaysModel> getWorkingDays(DateTime dateTime) async {
-    final workingDaysData = await _firebaseInstance
-        .collection("college")
-        .doc("working_days")
-        .get();
+  Future<CollegeHolidaysModel> getHolidayDays(DateTime dateTime) async {
+    try {
+      final holidayData = await _firebaseInstance
+          .collection("college")
+          .doc("holidays")
+          .get();
 
-    final data = workingDaysData.data();
+      final holiday = holidayData.data();
 
-    if (data == null || data.isEmpty) {
-      return WorkingDaysModel(workingDays: null);
+      if (holiday == null || holiday.isEmpty) {
+        return CollegeHolidaysModel(holidayDates: null);
+      }
+
+      final Map<String, dynamic>? yearData = holiday["${dateTime.year}"];
+
+      if (yearData == null || yearData.isEmpty) {
+        return CollegeHolidaysModel(holidayDates: null);
+      }
+
+      final List<Map<String, dynamic>>? monthData =
+          (yearData["${dateTime.month}"] as List<dynamic>?)
+              ?.map((e) => Map<String, dynamic>.from(e))
+              .toList();
+
+      if (monthData == null || monthData.isEmpty) {
+        return CollegeHolidaysModel(holidayDates: null);
+      }
+
+      return CollegeHolidaysModel(holidayDates: monthData);
+    } catch (e) {
+      throw ServerException(message: "$e -> DataSource");
     }
-
-    final Map<String, dynamic>? yearData = data["${dateTime.year}"];
-
-    if (yearData == null || yearData.isEmpty) {
-      return WorkingDaysModel(workingDays: null);
-    }
-
-    final int? monthData = yearData["${dateTime.month}"];
-
-    if (monthData == null) {
-      return WorkingDaysModel(workingDays: null);
-    }
-
-    return WorkingDaysModel(workingDays: monthData);
   }
 
   @override
@@ -146,6 +154,38 @@ class HomeDatasourceImpl implements HomeDatasource {
       }
 
       return WorkingDaysModel(workingDays: monthResult.length);
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<StaffAttendanceStatusModel> getStaffAttendanceHistory() async {
+    try {
+      final staffAttendanceHistoryData = await _firebaseInstance
+          .collection("history")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      final staffAttendanceHistory = staffAttendanceHistoryData.data();
+
+      if (staffAttendanceHistory == null || staffAttendanceHistory.isEmpty) {
+        return StaffAttendanceStatusModel(present: false);
+      }
+
+      final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
+
+      if (yearResult == null || yearResult.isEmpty) {
+        return StaffAttendanceStatusModel(present: false);
+      }
+
+      final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
+
+      if (monthResult == null || monthResult.isEmpty) {
+        return StaffAttendanceStatusModel(present: false);
+      }
+
+      return StaffAttendanceStatusModel(present: true);
     } catch (e) {
       throw ServerException(message: e.toString());
     }

@@ -3,6 +3,7 @@ import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
+import 'package:staff_app/features/home/domain/entities/college_holiday.dart';
 
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
 import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
@@ -89,15 +90,15 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<AppFailure, WorkingDays>> getWorkingDays(
+  Future<Either<AppFailure, CollegeHolidays>> getHolidayDays(
     DateTime dateTime,
   ) async {
     try {
-      final workingDays = await dataSource.getWorkingDays(dateTime);
+      final holidayDays = await dataSource.getHolidayDays(dateTime);
 
-      return right(WorkingDays.fromModel(workingDays));
+      return right(CollegeHolidays.fromModel(holidayDays));
     } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
+      return left(AppFailure(message: "$e -> Repository"));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }

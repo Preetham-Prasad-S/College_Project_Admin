@@ -8,8 +8,8 @@ class StaffShiftModel {
 
   factory StaffShiftModel.fromJson(Map<String, dynamic> json) {
     return StaffShiftModel(
-      start: (json["start"] as Timestamp).toDate(),
-      end: (json["end"] as Timestamp).toDate(),
+      start: DateTime.fromMillisecondsSinceEpoch(json["start"] as int),
+      end: DateTime.fromMillisecondsSinceEpoch(json["end"] as int),
     );
   }
 

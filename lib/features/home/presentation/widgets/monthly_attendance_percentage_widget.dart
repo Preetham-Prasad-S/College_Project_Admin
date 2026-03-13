@@ -63,7 +63,7 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
                       attendancePercentage.when(
                         data: (data) {
                           if (data is AttendancePercentageDataState) {
-                            return "${data.percentage} %";
+                            return "${data.percentage.toInt()}%";
                           }
                           return "--";
                         },
