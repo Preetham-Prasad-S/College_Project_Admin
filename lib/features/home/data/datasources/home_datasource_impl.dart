@@ -5,7 +5,6 @@ import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/college_location_model.dart';
 import 'package:staff_app/features/home/data/models/college_holidays_model.dart';
 import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
-import 'package:staff_app/features/home/data/models/staff_attendance_status_model.dart';
 import 'package:staff_app/features/home/data/models/staff_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
 import 'package:staff_app/features/home/data/models/working_days_model.dart';
@@ -159,35 +158,35 @@ class HomeDatasourceImpl implements HomeDatasource {
     }
   }
 
-  @override
-  Future<StaffAttendanceStatusModel> getStaffAttendanceHistory() async {
-    try {
-      final staffAttendanceHistoryData = await _firebaseInstance
-          .collection("history")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+  // @override
+  // Future<StaffAttendanceStatusModel> getStaffAttendanceHistory() async {
+  //   try {
+  //     final staffAttendanceHistoryData = await _firebaseInstance
+  //         .collection("history")
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .get();
 
-      final staffAttendanceHistory = staffAttendanceHistoryData.data();
+  //     final staffAttendanceHistory = staffAttendanceHistoryData.data();
 
-      if (staffAttendanceHistory == null || staffAttendanceHistory.isEmpty) {
-        return StaffAttendanceStatusModel(present: false);
-      }
+  //     if (staffAttendanceHistory == null || staffAttendanceHistory.isEmpty) {
+  //       return StaffAttendanceStatusModel(present: false);
+  //     }
 
-      final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
+  //     final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
 
-      if (yearResult == null || yearResult.isEmpty) {
-        return StaffAttendanceStatusModel(present: false);
-      }
+  //     if (yearResult == null || yearResult.isEmpty) {
+  //       return StaffAttendanceStatusModel(present: false);
+  //     }
 
-      final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
+  //     final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
 
-      if (monthResult == null || monthResult.isEmpty) {
-        return StaffAttendanceStatusModel(present: false);
-      }
+  //     if (monthResult == null || monthResult.isEmpty) {
+  //       return StaffAttendanceStatusModel(present: false);
+  //     }
 
-      return StaffAttendanceStatusModel(present: true);
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
+  //     return StaffAttendanceStatusModel(present: true);
+  //   } catch (e) {
+  //     throw ServerException(message: e.toString());
+  //   }
+  // }
 }
