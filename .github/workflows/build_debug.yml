@@ -19,11 +19,19 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.13.0'
-
+      
+      - name: Print Flutter and Dart Version
+        run: |
+          which flutter
+          flutter --version
+          which dart
+          dart --version
+      
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.pub-cache
+          path: |
+            ~/.pub-cache
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-flutter-
