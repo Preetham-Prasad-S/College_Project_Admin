@@ -40,17 +40,17 @@ class HomeDatasourceImpl implements HomeDatasource {
     }
   }
 
-  // @override
-  // Future<void> setStaffStatus(StaffAttendanceEntryModel model) async {
-  //   try {
-  //     await _firebaseInstance
-  //         .collection("history")
-  //         .doc(FirebaseAuth.instance.currentUser!.uid)
-  //         .set(model.toJson(), SetOptions(merge: true));
-  //   } catch (e) {
-  //     throw ServerException(message: e.toString());
-  //   }
-  // }
+  @override
+  Future<void> setStaffStatus(StaffAttendanceEntryModel model) async {
+    try {
+      await _firebaseInstance
+          .collection("history")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(model.toJson(), SetOptions(merge: true));
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
 
   @override
   Future<CollegeHolidaysModel> getHolidayDays(DateTime dateTime) async {
