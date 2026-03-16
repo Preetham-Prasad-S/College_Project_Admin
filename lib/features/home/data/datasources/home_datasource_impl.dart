@@ -4,10 +4,8 @@ import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/college_location_model.dart';
 import 'package:staff_app/features/home/data/models/college_holidays_model.dart';
-import 'package:staff_app/features/home/data/models/staff_attendance_entry_model.dart';
-import 'package:staff_app/features/home/data/models/staff_history_model.dart';
+import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
-import 'package:staff_app/features/home/data/models/working_days_model.dart';
 
 class HomeDatasourceImpl implements HomeDatasource {
   final FirebaseFirestore _firebaseInstance;
@@ -42,54 +40,17 @@ class HomeDatasourceImpl implements HomeDatasource {
     }
   }
 
-  @override
-  Future<StaffHistoryModel> getStaffStatus(DateTime dateTime) async {
-    try {
-      final staffHistory = await _firebaseInstance
-          .collection("history")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      final result = staffHistory.data();
-
-      if (result == null || result.isEmpty) {
-        return StaffHistoryModel(clockIn: null, clockOut: null);
-      }
-
-      final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
-
-      if (yearResult == null || yearResult.isEmpty) {
-        return StaffHistoryModel(clockIn: null, clockOut: null);
-      }
-
-      final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
-
-      if (monthResult == null || monthResult.isEmpty) {
-        return StaffHistoryModel(clockIn: null, clockOut: null);
-      }
-
-      final Map<String, dynamic>? dateResult = monthResult["${dateTime.day}"];
-
-      if (dateResult == null || dateResult.isEmpty) {
-        return StaffHistoryModel(clockIn: null, clockOut: null);
-      }
-      return StaffHistoryModel.fromJson(dateResult);
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
-
-  @override
-  Future<void> setStaffStatus(StaffAttendanceEntryModel model) async {
-    try {
-      await _firebaseInstance
-          .collection("history")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set(model.toJson(), SetOptions(merge: true));
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
+  // @override
+  // Future<void> setStaffStatus(StaffAttendanceEntryModel model) async {
+  //   try {
+  //     await _firebaseInstance
+  //         .collection("history")
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .set(model.toJson(), SetOptions(merge: true));
+  //   } catch (e) {
+  //     throw ServerException(message: e.toString());
+  //   }
+  // }
 
   @override
   Future<CollegeHolidaysModel> getHolidayDays(DateTime dateTime) async {
@@ -127,7 +88,9 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<WorkingDaysModel> getAttendedDays(DateTime dateTime) async {
+  Future<StaffMonthlyHistoryModel> getCurrentMonthHistory(
+    DateTime currentDateTime,
+  ) async {
     try {
       final attendedDays = await _firebaseInstance
           .collection("history")
@@ -137,56 +100,34 @@ class HomeDatasourceImpl implements HomeDatasource {
       final result = attendedDays.data();
 
       if (result == null || result.isEmpty) {
-        return WorkingDaysModel(workingDays: null);
+        throw ServerException(
+          message: "No History Found : HomeDatasource.getCurrentMonthHistory()",
+        );
       }
 
-      final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
+      final Map<String, dynamic>? yearResult =
+          result["${currentDateTime.year}"];
 
       if (yearResult == null || yearResult.isEmpty) {
-        return WorkingDaysModel(workingDays: null);
+        throw ServerException(
+          message:
+              "No History Found  For Year ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
+        );
       }
 
-      final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
+      final Map<String, Map<String, dynamic>>? monthResult =
+          yearResult["${currentDateTime.month}"];
 
       if (monthResult == null || monthResult.isEmpty) {
-        return WorkingDaysModel(workingDays: null);
+        throw ServerException(
+          message:
+              "No History Found For month ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
+        );
       }
 
-      return WorkingDaysModel(workingDays: monthResult.length);
+      return StaffMonthlyHistoryModel.fromJson(monthResult);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
   }
-
-  // @override
-  // Future<StaffAttendanceStatusModel> getStaffAttendanceHistory() async {
-  //   try {
-  //     final staffAttendanceHistoryData = await _firebaseInstance
-  //         .collection("history")
-  //         .doc(FirebaseAuth.instance.currentUser!.uid)
-  //         .get();
-
-  //     final staffAttendanceHistory = staffAttendanceHistoryData.data();
-
-  //     if (staffAttendanceHistory == null || staffAttendanceHistory.isEmpty) {
-  //       return StaffAttendanceStatusModel(present: false);
-  //     }
-
-  //     final Map<String, dynamic>? yearResult = result["${dateTime.year}"];
-
-  //     if (yearResult == null || yearResult.isEmpty) {
-  //       return StaffAttendanceStatusModel(present: false);
-  //     }
-
-  //     final Map<String, dynamic>? monthResult = yearResult["${dateTime.month}"];
-
-  //     if (monthResult == null || monthResult.isEmpty) {
-  //       return StaffAttendanceStatusModel(present: false);
-  //     }
-
-  //     return StaffAttendanceStatusModel(present: true);
-  //   } catch (e) {
-  //     throw ServerException(message: e.toString());
-  //   }
-  // }
 }

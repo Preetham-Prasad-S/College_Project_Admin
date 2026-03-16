@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/usecases/usecase.dart';
-import 'package:staff_app/features/home/domain/entities/staff_history.dart';
+import 'package:staff_app/features/home/domain/entities/staff_timestamp.dart';
 import 'package:staff_app/features/home/domain/entities/staff_status.dart';
 import 'package:staff_app/features/home/domain/enums/staff_status_enum.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
@@ -23,7 +23,7 @@ class GetStaffAttendanceStatusUsecase
     return staffHistory.fold(
       (AppFailure failure) => left(AppFailure(message: failure.message)),
 
-      (StaffHistory data) {
+      (StaffTimestamp data) {
         if (data.clockIn == null) {
           return right(StaffStatus(status: StaffStatusEnum.clockedOut));
         }

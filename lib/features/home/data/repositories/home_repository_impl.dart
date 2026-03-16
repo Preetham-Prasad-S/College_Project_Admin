@@ -3,11 +3,12 @@ import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
+import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
 import 'package:staff_app/features/home/domain/entities/college_holiday.dart';
 
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
 import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
-import 'package:staff_app/features/home/domain/entities/staff_history.dart';
+import 'package:staff_app/features/home/domain/entities/staff_timestamp.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 
 import 'package:staff_app/features/home/domain/entities/working_days.dart';
@@ -60,13 +61,17 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<AppFailure, StaffHistory>> getStaffStatus(
+  Future<Either<AppFailure, StaffTimestamp>> getStaffStatus(
     DateTime dateTime,
   ) async {
     try {
-      final staffHistory = await dataSource.getStaffStatus(dateTime);
+      final staffHistory = await dataSource.getCurrentMonthHistory(dateTime);
 
-      return right(StaffHistory.fromModel(staffHistory));
+      return right(
+        StaffTimestamp.fromModel(
+          staffHistory.historyData[dateTime.day] as StaffHistoryDataModel,
+        ),
+      );
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {

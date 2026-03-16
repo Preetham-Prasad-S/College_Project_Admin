@@ -1,11 +1,11 @@
-class StaffHistoryModel {
+class StaffTimestampModel {
   final DateTime? clockIn;
   final DateTime? clockOut;
 
-  StaffHistoryModel({required this.clockIn, required this.clockOut});
+  StaffTimestampModel({required this.clockIn, required this.clockOut});
 
-  factory StaffHistoryModel.fromJson(Map<String, dynamic> json) {
-    return StaffHistoryModel(
+  factory StaffTimestampModel.fromJson(Map<String, dynamic> json) {
+    return StaffTimestampModel(
       clockIn: json["clock_in"] != null
           ? DateTime.fromMillisecondsSinceEpoch(json["clock_in"] as int)
           : null,
@@ -17,5 +17,5 @@ class StaffHistoryModel {
 
   @override
   String toString() =>
-      'StaffHistoryModel(clockIn: $clockIn, clockOut: $clockOut)';
+      'StaffTimestampModel(clockIn: $clockIn, clockOut: $clockOut)';
 }
