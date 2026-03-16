@@ -1,0 +1,73 @@
+name: build-debug_apk-email
+on:
+  push:
+    branches: [main]
+  
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Checkout Repo
+              uses: actions/checkout@v3
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: 'stable'
+
+            - name: Cache Flutter dependencies
+              uses: actions/cache@v3
+              with:
+                path: ~/.pub-cache
+                key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+                restore-keys: |
+                  ${{ runner.os }}-flutter-
+
+            - name: Install Dependencies
+              run: flutter pub get
+
+            - name: Build Debug APK
+              run: flutter build apk --debug
+
+            - name: Verify APK Build
+              run: |
+                if [ ! -f build/app/outputs/flutter-apk/app-debug.apk ]; then
+                  echo "APK build failed"
+                  exit 1
+                fi
+
+            - name: Prepare APK
+              run : |
+                mkdir release
+                cp build/app/outputs/flutter-apk/app-debug.apk release/app-debug-${{ github.run_number }}.apk
+
+            - name: Create GitHub Release
+              id: create_release
+              uses: softprops/action-gh-release@v1
+              with:
+                tag_name: debug-build-${{ github.run_number }}
+                name: Debug Build ${{ github.run_number }}
+                files: release/*.apk
+              env: 
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Send Email Notification
+              uses: dawidd6/action-send-mail@v3
+              with:
+                server_address: smtp.gmail.com
+                server_port: 465
+                username: ${{ secrets.EMAIL_USERNAME }}
+                password: ${{ secrets.EMAIL_PASSWORD }}
+                subject: New Debug APK Build - ${{ github.run_number }}
+                body: |
+                  A new debug APK build is available.
+
+                  commit message:
+                  ${{ github.event.head_commit.message }}
+
+                  Download APK directly:
+                  https://github.com/${{ github.repository }}/releases/download/debug-build-${{ github.run_number }}/app-debug-${{ github.run_number }}.apk
+
+                to: ${{ secrets.EMAIL_RECIPIENTS }}
+                from: Flutter CI
