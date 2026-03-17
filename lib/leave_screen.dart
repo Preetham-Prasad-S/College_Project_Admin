@@ -183,11 +183,13 @@ class LeaveScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  "8/10 Days",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                Flexible(
+                                  child: Text(
+                                    "8/10 Days",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -264,11 +266,13 @@ class LeaveScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  "5/10 Days",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                Flexible(
+                                  child: Text(
+                                    "5/10 Days",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],

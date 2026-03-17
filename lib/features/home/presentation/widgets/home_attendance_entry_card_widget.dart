@@ -18,6 +18,7 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final height = MediaQuery.of(context).size.height;
     final locationState = ref.watch(staffLocationControllerProvider);
     final staffShiftState = ref.watch(getStaffShiftControllerProvider);
     final staffAttendanceStatusState = ref.watch(
@@ -130,7 +131,8 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
             ),
             const SizedBox(height: 15),
             SizedBox(
-              height: 80,
+              height: height*0.1,
+              width: double.infinity,
               child: locationState.when(
                 data: (location) {
                   if (location is LocationDataState) {

@@ -5,6 +5,7 @@ class MonthlyAttendancePercentageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return const Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
@@ -47,6 +48,7 @@ class MonthlyAttendancePercentageWidget extends StatelessWidget {
                       width: 100,
                       child: Text(
                         "ATTENDANCE PERCENTAGE",
+                        maxLines: 2,
                         style: TextStyle(
                           color: Color.fromRGBO(19, 109, 236, 1),
                           fontWeight: FontWeight.bold,

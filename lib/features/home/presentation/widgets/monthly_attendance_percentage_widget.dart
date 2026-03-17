@@ -8,6 +8,7 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.of(context).size.width;
     final attendancePercentage = ref.watch(
       attendancePercentageControllerProvider,
     );
@@ -20,7 +21,7 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
       margin: EdgeInsets.all(0),
       elevation: 0,
       child: Padding(
-        padding: EdgeInsets.all(15.0),
+        padding: EdgeInsets.all(width*0.04),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -28,7 +29,7 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: Color.fromRGBO(19, 109, 236, 1),
-                  radius: 26,
+                  radius: width*0.06,
                   child: Card(
                     color: Color.fromRGBO(255, 255, 255, 1),
                     elevation: 0,
@@ -40,7 +41,7 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
                     margin: EdgeInsets.all(0),
                     child: Icon(
                       Icons.bar_chart,
-                      size: 18,
+                      size: width*0.045,
                       color: Color.fromRGBO(19, 109, 236, 1),
                     ),
                   ),
@@ -50,12 +51,14 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 100,
+                      width: width*0.4,
                       child: Text(
                         "ATTENDANCE PERCENTAGE",
+                        maxLines: 2,
                         style: TextStyle(
                           color: Color.fromRGBO(19, 109, 236, 1),
                           fontWeight: FontWeight.bold,
+                          fontSize: 16
                         ),
                       ),
                     ),
@@ -80,7 +83,7 @@ class MonthlyAttendancePercentageWidget extends ConsumerWidget {
               ],
             ),
             SizedBox(
-              width: 100,
+              width: width*0.2,
               child: LinearProgressIndicator(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 minHeight: 6,
