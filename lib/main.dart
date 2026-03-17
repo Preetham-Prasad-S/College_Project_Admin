@@ -19,6 +19,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(1.0)),
+        child: child!,
+      ),
       debugShowCheckedModeBanner: false,
       title: "Staff Attendance App",
       theme: ThemeData(useMaterial3: true).copyWith(

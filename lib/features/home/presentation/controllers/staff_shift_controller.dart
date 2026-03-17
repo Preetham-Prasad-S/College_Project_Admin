@@ -3,17 +3,20 @@ import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/usecases/usecase.dart';
 import 'package:staff_app/features/home/dependency.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
 
-class StaffShiftController extends AsyncNotifier<AsyncValue<StaffShift>> {
+class StaffShiftController extends AsyncNotifier<StaffShiftState> {
   @override
-  Future<AsyncValue<StaffShift>> build() async {
+  Future<StaffShiftState> build() async {
     final getStaffShiftUsecase = ref.read(getStaffShiftUsecaseProvider);
 
     final result = await getStaffShiftUsecase(NoParams());
 
     return result.fold(
-      (AppFailure failure) => AsyncError(failure.message, StackTrace.current),
-      (StaffShift shift) => AsyncData(shift),
+      (AppFailure failure) =>
+          StaffShiftErrorState(errorMessage: failure.message),
+      (StaffShift shift) =>
+          StaffShiftDataState(startShift: shift.start, endShift: shift.end),
     );
   }
 }

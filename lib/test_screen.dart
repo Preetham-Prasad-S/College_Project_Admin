@@ -18,25 +18,11 @@ class TestScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // final d = HomeDatasourceImpl(
-                //   firebaseInstance: FirebaseFirestore.instance,
-                // );
+                final d = await HomeDatasourceImpl(
+                  firebaseInstance: FirebaseFirestore.instance,
+                ).getCurrentMonthHistory(DateTime.now());
 
-                // final dresult = await d.getHolidayDays(DateTime.now());
-
-                // print(dresult);
-
-                final u = GetAttendancePercentageUsecase(
-                  repository: ref.watch(homeRepositoryProvider),
-                );
-
-                final result = await u(
-                  GetAttendancePercentageUsecaseParams(
-                    currentDate: DateTime.now(),
-                  ),
-                );
-
-                result.fold((l) => print(l), (r) => print(r.percentage));
+                print(d);
               },
 
               child: Text("Get Working Days"),

@@ -9,6 +9,7 @@ import 'package:staff_app/features/home/domain/enums/staff_status_enum.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/set_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
 
 class StaffAttendanceStatusController extends AsyncNotifier<StaffStatusState> {
@@ -40,12 +41,34 @@ class StaffAttendanceStatusController extends AsyncNotifier<StaffStatusState> {
   Future<void> attendancEntry(String type) async {
     final setStaffStatus = ref.read(setStaffAttendanceStatusUsecaseProvider);
     final location = await ref.read(staffLocationControllerProvider.future);
+    final getStaffShift = ref.read(getStaffShiftControllerProvider);
+    final currentTime = DateTime.now();
+
+    bool isLateEntry = false;
+    bool isLateExit = false;
 
     if (location is LocationDataState) {
       if (location.inCampus) {
+        getStaffShift.when(
+          data: (data) {
+            data is StaffShiftDataState
+                ? isLateEntry = currentTime.isBefore(data.startShift)
+                : false;
+            data is StaffShiftDataState
+                ? isLateExit = currentTime.isAfter(data.endShift)
+                : false;
+          },
+          error: (error, stackTrace) => null,
+          loading: () => null,
+        );
         setStaffStatus(
           SetStaffAttendanceStatusUsecaseParmas(
-            staffEntry: StaffAttendanceEntry(entry: DateTime.now(), type: type),
+            staffEntry: StaffAttendanceEntry(
+              entry: currentTime,
+              isLateEntry: isLateEntry,
+              isLateExit: isLateExit,
+              type: type,
+            ),
           ),
         );
       }

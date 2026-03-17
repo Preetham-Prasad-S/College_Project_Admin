@@ -41,12 +41,23 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<void> setStaffStatus(StaffAttendanceEntryModel model) async {
+  Future<void> setCurrentMonthHistory({
+    required int year,
+    required int month,
+    required StaffMonthlyHistoryModel model,
+  }) async {
     try {
-      await _firebaseInstance
-          .collection("history")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set(model.toJson(), SetOptions(merge: true));
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+
+      final docRef = _firebaseInstance.collection("history").doc(userId);
+
+      final updates = <String, dynamic>{};
+
+      model.historyData.forEach((day, data) {
+        updates["$year.$month.$day"] = data.toJson();
+      });
+
+      await docRef.set(updates, SetOptions(merge: true));
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -115,15 +126,19 @@ class HomeDatasourceImpl implements HomeDatasource {
         );
       }
 
-      final Map<String, Map<String, dynamic>>? monthResult =
+      final Map<String, dynamic>? rawMonth =
           yearResult["${currentDateTime.month}"];
 
-      if (monthResult == null || monthResult.isEmpty) {
+      if (rawMonth == null || rawMonth.isEmpty) {
         throw ServerException(
           message:
               "No History Found For month ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
         );
       }
+
+      final Map<String, Map<String, dynamic>> monthResult = (rawMonth).map(
+        (key, value) => MapEntry(key, value as Map<String, dynamic>),
+      );
 
       return StaffMonthlyHistoryModel.fromJson(monthResult);
     } catch (e) {

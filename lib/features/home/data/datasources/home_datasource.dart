@@ -10,4 +10,9 @@ abstract interface class HomeDatasource {
   Future<StaffMonthlyHistoryModel> getCurrentMonthHistory(
     DateTime currentDateTime,
   );
+  Future<void> setCurrentMonthHistory({
+    required int year,
+    required int month,
+    required StaffMonthlyHistoryModel model,
+  });
 }

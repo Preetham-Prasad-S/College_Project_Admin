@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:staff_app/features/home/dependency.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
 import 'package:staff_app/features/home/presentation/widgets/attendance_entry_buttons_widget.dart';
 import 'package:staff_app/features/home/presentation/widgets/in_premises_widget.dart';
@@ -188,7 +189,7 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
 
             staffShiftState.when(
               data: (data) => Text(
-                "Shift : ${DateFormat("hh:mm a").format(data.value!.start)} - ${DateFormat("hh:mm a").format(data.value!.end)}",
+                "Shift : ${data is StaffShiftDataState ? DateFormat("hh:mm a").format((data.endShift)) : "--:--:--"}  - ${data is StaffShiftDataState ? DateFormat("hh:mm a").format((data.startShift)) : "--:--:--"} ",
                 style: TextStyle(
                   height: 2,
                   color: const Color.fromRGBO(255, 255, 255, 0.7),

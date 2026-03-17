@@ -6,7 +6,7 @@ class StaffShift {
 
   StaffShift({required this.start, required this.end});
 
-  factory StaffShift.fromeModel(StaffShiftModel model) {
+  factory StaffShift.fromModel(StaffShiftModel model) {
     return StaffShift(start: model.start, end: model.end);
   }
 

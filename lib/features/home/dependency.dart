@@ -19,6 +19,7 @@ import 'package:staff_app/features/home/presentation/controllers/staff_location_
 import 'package:staff_app/features/home/presentation/controllers/staff_shift_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/attendance_percentage_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
 
 final firebaseStoreageInstanceProvider = Provider<FirebaseFirestore>(
@@ -47,7 +48,7 @@ final getStaffShiftUsecaseProvider = Provider<GetStaffShiftUsecase>(
 );
 
 final getStaffShiftControllerProvider =
-    AsyncNotifierProvider<StaffShiftController, AsyncValue<StaffShift>>(
+    AsyncNotifierProvider<StaffShiftController, StaffShiftState>(
       () => StaffShiftController(),
     );
 

@@ -4,6 +4,7 @@ import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
+import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
 import 'package:staff_app/features/home/domain/entities/college_holiday.dart';
 
 import 'package:staff_app/features/home/domain/entities/college_location.dart';
@@ -50,9 +51,9 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppFailure, StaffShift>> getStaffShift() async {
     try {
-      final staffShit = await dataSource.getStaffShift();
+      final staffShift = await dataSource.getStaffShift();
 
-      return right(StaffShift.fromeModel(staffShit));
+      return right(StaffShift.fromModel(staffShift));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {
@@ -67,11 +68,13 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final staffHistory = await dataSource.getCurrentMonthHistory(dateTime);
 
-      return right(
-        StaffTimestamp.fromModel(
-          staffHistory.historyData[dateTime.day] as StaffHistoryDataModel,
-        ),
-      );
+      final data = staffHistory.historyData[dateTime.day];
+
+      if (data == null) {
+        return left(AppFailure(message: "No attendance found for today"));
+      }
+
+      return right(StaffTimestamp.fromModel(data));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {
@@ -84,7 +87,23 @@ class HomeRepositoryImpl implements HomeRepository {
     StaffAttendanceEntry staffEntry,
   ) async {
     try {
-      await dataSource.setStaffStatus(staffEntry.toModel());
+      final now = staffEntry.entry;
+
+      // 1. Get existing month data
+      final monthlyHistory = await dataSource.getCurrentMonthHistory(now);
+
+      // 2. Get today's data (if exists)
+      final existing = monthlyHistory.historyData[now.day];
+
+      // 3. Convert event → updated state
+      final updatedDay = staffEntry.toHistoryModel(existing: existing);
+
+      // 4. Update only this day
+      await dataSource.setCurrentMonthHistory(
+        year: now.year,
+        month: now.month,
+        model: StaffMonthlyHistoryModel(historyData: {now.day: updatedDay}),
+      );
 
       return right(null);
     } on ServerException catch (e) {
@@ -114,9 +133,9 @@ class HomeRepositoryImpl implements HomeRepository {
     DateTime dateTime,
   ) async {
     try {
-      final attendedDays = await dataSource.getAttendedDays(dateTime);
+      final monthHistory = await dataSource.getCurrentMonthHistory(dateTime);
 
-      return right(WorkingDays(workingDays: attendedDays.workingDays));
+      return right(WorkingDays(workingDays: monthHistory.historyData.length));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {
