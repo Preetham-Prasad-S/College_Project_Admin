@@ -42,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
         child: Padding(
@@ -247,12 +248,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           "Forgot Password ?",
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: width > 330 ? 16 : 14,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(19, 109, 236, 1),
+                            color: const Color.fromRGBO(19, 109, 236, 1),
                           ),
                         ),
                       ),

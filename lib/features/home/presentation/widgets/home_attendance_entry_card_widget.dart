@@ -33,15 +33,13 @@ class _HomeAttendanceEntryCardWidgetState
   }
 
   @override
-  void dispose() {
-    tick.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final attendanceCardState = ref.watch(attendanceEntryControllerProvider);
-    final staffShift = ref.watch(getstaffShiftProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final height = MediaQuery.of(context).size.height;
+    final locationState = ref.watch(staffLocationControllerProvider);
+    final staffShiftState = ref.watch(getStaffShiftControllerProvider);
+    final staffAttendanceStatusState = ref.watch(
+      staffAttendanceStatusControllerProvider,
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -153,12 +151,59 @@ class _HomeAttendanceEntryCardWidgetState
             ),
             const SizedBox(height: 15),
             SizedBox(
-              height: 80,
-              child: attendanceCardState.when(
-                data: (data) => AttendanceEntryButtonsWidget(state: true),
-                loading: () => AttendanceEntryButtonsWidget(state: false),
-                error: (error, stackTrace) =>
-                    AttendanceEntryButtonsWidget(state: false),
+              height: height*0.1,
+              width: double.infinity,
+              child: locationState.when(
+                data: (location) {
+                  if (location is LocationDataState) {
+                    if (location.inCampus) {
+                      return staffAttendanceStatusState.when(
+                        data: (data) {
+                          if (data is StaffStatusClockedInState) {
+                            return AttendanceEntryButtonsWidget(
+                              clockedInstate: false,
+                              clockedOutstate: true,
+                            );
+                          } else if (data is StaffStatusClockedOutState) {
+                            return AttendanceEntryButtonsWidget(
+                              clockedInstate: true,
+                              clockedOutstate: false,
+                            );
+                          }
+                          return AttendanceEntryButtonsWidget(
+                            clockedInstate: false,
+                            clockedOutstate: false,
+                          );
+                        },
+                        error: (error, stackTrace) =>
+                            AttendanceEntryButtonsWidget(
+                              clockedInstate: false,
+                              clockedOutstate: false,
+                            ),
+                        loading: () => AttendanceEntryButtonsWidget(
+                          clockedInstate: false,
+                          clockedOutstate: false,
+                        ),
+                      );
+                    }
+                    return AttendanceEntryButtonsWidget(
+                      clockedInstate: false,
+                      clockedOutstate: false,
+                    );
+                  }
+                  return AttendanceEntryButtonsWidget(
+                    clockedInstate: false,
+                    clockedOutstate: false,
+                  );
+                },
+                error: (error, stackTrace) => AttendanceEntryButtonsWidget(
+                  clockedInstate: false,
+                  clockedOutstate: false,
+                ),
+                loading: () => AttendanceEntryButtonsWidget(
+                  clockedInstate: false,
+                  clockedOutstate: false,
+                ),
               ),
             ),
             SizedBox(height: 10),

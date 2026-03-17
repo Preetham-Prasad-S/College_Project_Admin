@@ -18,7 +18,7 @@ class GetStaffAttendanceStatusUsecase
   Future<Either<AppFailure, StaffStatus>> call(
     GetStaffAttendanceStatusUsecaseParams params,
   ) async {
-    final staffHistory = await _repository.getStaffHistory(params.currentTime);
+    final staffHistory = await _repository.getStaffStatus(params.currentTime);
 
     return staffHistory.fold(
       (AppFailure failure) => left(AppFailure(message: failure.message)),

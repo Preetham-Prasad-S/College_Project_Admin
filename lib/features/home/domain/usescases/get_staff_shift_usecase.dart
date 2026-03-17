@@ -12,8 +12,6 @@ class GetStaffShiftUsecase implements FutureUsecase<StaffShift, NoParams> {
 
   @override
   Future<Either<AppFailure, StaffShift>> call(NoParams params) async {
-    final staffShift = await _repository.getStaffShift();
-
-    return staffShift;
+    return await _repository.getStaffShift();
   }
 }
