@@ -95,7 +95,7 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       return CollegeHolidaysModel.fromJson(monthData);
     } catch (e) {
-      throw ServerException(message: "$e -> DataSource");
+      throw ServerException(message: "$e -> HomeDatasource.getHolidayDays");
     }
   }
 
@@ -112,7 +112,7 @@ class HomeDatasourceImpl implements HomeDatasource {
       final result = attendedDays.data();
 
       if (result == null || result.isEmpty) {
-        throw ServerException(
+        throw DataException(
           message: "No History Found : HomeDatasource.getCurrentMonthHistory()",
         );
       }
@@ -121,7 +121,7 @@ class HomeDatasourceImpl implements HomeDatasource {
           result["${currentDateTime.year}"];
 
       if (yearResult == null || yearResult.isEmpty) {
-        throw ServerException(
+        throw DataException(
           message:
               "No History Found  For Year ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
         );
@@ -131,7 +131,7 @@ class HomeDatasourceImpl implements HomeDatasource {
           yearResult["${currentDateTime.month}"];
 
       if (rawMonth == null || rawMonth.isEmpty) {
-        throw ServerException(
+        throw DataException(
           message:
               "No History Found For month ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
         );

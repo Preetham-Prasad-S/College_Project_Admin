@@ -14,24 +14,22 @@ class StaffAttendanceEntry {
   });
 
   /// Convert event → updated day state
-  StaffHistoryDataModel toHistoryModel({
-    required StaffHistoryDataModel? existing,
-  }) {
+  StaffHistoryDataModel toHistoryModel({required StaffHistoryDataModel model}) {
     if (type == "clock_in") {
       return StaffHistoryDataModel(
         clockIn: entry,
-        clockOut: existing?.clockOut,
-        lateEntry: existing?.lateEntry ?? false,
-        lateExit: existing?.lateExit ?? false,
-        status: "present",
+        clockOut: model.clockOut,
+        lateEntry: model.lateEntry,
+        lateExit: model.lateExit,
+        status: type,
       );
     } else {
       return StaffHistoryDataModel(
-        clockIn: existing?.clockIn,
+        clockIn: model.clockIn,
         clockOut: entry,
-        lateEntry: existing?.lateEntry ?? false,
-        lateExit: existing?.lateExit ?? false,
-        status: "present",
+        lateEntry: model.lateEntry,
+        lateExit: model.lateExit,
+        status: type,
       );
     }
   }

@@ -25,11 +25,14 @@ class HolidayModel {
 
   factory HolidayModel.fromJson(Map<String, dynamic> json) {
     return HolidayModel(
-      date: json['date'],
+      date: DateTime.fromMillisecondsSinceEpoch(json["date"]),
       name: json['name'],
-      type: json['name'],
+      type: json['type'],
     );
   }
 
   HolidayModel({required this.date, required this.name, required this.type});
+
+  @override
+  String toString() => 'HolidayModel(date: $date, name: $name, type: $type)';
 }

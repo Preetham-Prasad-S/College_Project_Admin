@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 abstract interface class AppException implements Exception {
   final String message;
 
@@ -10,6 +9,13 @@ class DeviceExcepiton implements AppException {
   final String message;
 
   DeviceExcepiton({required this.message});
+}
+
+class DataException implements AppException {
+  @override
+  final String message;
+
+  DataException({required this.message});
 }
 
 class ServerException implements AppException {
