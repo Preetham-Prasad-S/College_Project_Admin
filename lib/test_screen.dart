@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
-import 'package:staff_app/features/home/dependency.dart';
-import 'package:staff_app/features/home/domain/usescases/get_attendance_percentage_usecase.dart';
 
 class TestScreen extends ConsumerWidget {
   const TestScreen({super.key});
@@ -18,9 +16,31 @@ class TestScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                // await HomeDatasourceImpl(
+                //   firebaseInstance: FirebaseFirestore.instance,
+                // ).setCurrentMonthHistory(
+                //   year: 2026,
+                //   month: 3,
+                //   model: StaffMonthlyHistoryModel(
+                //     historyData: {
+                //       19: StaffHistoryDataModel(
+                //         clockIn: DateTime.now(),
+                //         clockOut: DateTime.now(),
+                //         lateEntry: false,
+                //         lateExit: false,
+                //         status: "clock_in",
+                //       ),
+                //     },
+                //   ),
+                // );
+
+                // final d = await HomeDatasourceImpl(
+                //   firebaseInstance: FirebaseFirestore.instance,
+                // ).getCurrentMonthHistory(DateTime.now());
+
                 final d = await HomeDatasourceImpl(
                   firebaseInstance: FirebaseFirestore.instance,
-                ).getCurrentMonthHistory(DateTime.now());
+                ).getStaffShift();
 
                 print(d);
               },

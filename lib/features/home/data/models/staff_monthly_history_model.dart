@@ -8,7 +8,7 @@ class StaffMonthlyHistoryModel {
   factory StaffMonthlyHistoryModel.fromJson(Map<String, dynamic> json) {
     return StaffMonthlyHistoryModel(
       historyData: json.map(
-        (key, value) => MapEntry(
+        (key, value) => MapEntry<int, StaffHistoryDataModel>(
           int.parse(key),
           StaffHistoryDataModel.fromJson(value as Map<String, dynamic>),
         ),
@@ -17,9 +17,7 @@ class StaffMonthlyHistoryModel {
   }
 
   Map<String, dynamic> toJson() {
-    return historyData.map(
-      (key, value) => MapEntry(key.toString(), value.toJson()),
-    );
+    return historyData.map((key, value) => MapEntry("$key", value.toJson()));
   }
 
   @override

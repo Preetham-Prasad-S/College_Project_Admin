@@ -16,14 +16,14 @@ class StaffHistoryDataModel {
   factory StaffHistoryDataModel.fromJson(Map<String, dynamic> json) {
     return StaffHistoryDataModel(
       clockIn: json["clock_in"] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json["clock_in"] as int)
+          ? DateTime.fromMillisecondsSinceEpoch(json["clock_in"])
           : null,
       clockOut: json["clock_out"] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json["clock_out"] as int)
+          ? DateTime.fromMillisecondsSinceEpoch(json["clock_out"])
           : null,
-      lateEntry: (json["late_entry"] ?? false) as bool,
-      lateExit: (json["late_exit"] ?? false) as bool,
-      status: json["status"] as String,
+      lateEntry: json["late_entry"],
+      lateExit: json["late_exit"],
+      status: json["status"],
     );
   }
 

@@ -51,13 +51,9 @@ class HomeDatasourceImpl implements HomeDatasource {
 
       final docRef = _firebaseInstance.collection("history").doc(userId);
 
-      final updates = <String, dynamic>{};
-
-      model.historyData.forEach((day, data) {
-        updates["$year.$month.$day"] = data.toJson();
-      });
-
-      await docRef.set(updates, SetOptions(merge: true));
+      await docRef.set({
+        "$year": {"$month": model.toJson()},
+      }, SetOptions(merge: true));
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -74,25 +70,30 @@ class HomeDatasourceImpl implements HomeDatasource {
       final holiday = holidayData.data();
 
       if (holiday == null || holiday.isEmpty) {
-        return CollegeHolidaysModel(holidayDates: null);
+        throw ServerException(
+          message: "No Holiday Data Found : HomeDatasource.getHolidayDays",
+        );
       }
 
       final Map<String, dynamic>? yearData = holiday["${dateTime.year}"];
 
       if (yearData == null || yearData.isEmpty) {
-        return CollegeHolidaysModel(holidayDates: null);
+        throw ServerException(
+          message:
+              "No Holiday Data Found For The Year ${dateTime.year} : HomeDatasource.getHolidayDays",
+        );
       }
 
-      final List<Map<String, dynamic>>? monthData =
-          (yearData["${dateTime.month}"] as List<dynamic>?)
-              ?.map((e) => Map<String, dynamic>.from(e))
-              .toList();
+      final List<dynamic>? monthData = yearData["${dateTime.month}"];
 
       if (monthData == null || monthData.isEmpty) {
-        return CollegeHolidaysModel(holidayDates: null);
+        throw ServerException(
+          message:
+              "No Holiday Data Found For The Month ${dateTime.month} : HomeDatasource.getHolidayDays",
+        );
       }
 
-      return CollegeHolidaysModel(holidayDates: monthData);
+      return CollegeHolidaysModel.fromJson(monthData);
     } catch (e) {
       throw ServerException(message: "$e -> DataSource");
     }
@@ -136,11 +137,7 @@ class HomeDatasourceImpl implements HomeDatasource {
         );
       }
 
-      final Map<String, Map<String, dynamic>> monthResult = (rawMonth).map(
-        (key, value) => MapEntry(key, value as Map<String, dynamic>),
-      );
-
-      return StaffMonthlyHistoryModel.fromJson(monthResult);
+      return StaffMonthlyHistoryModel.fromJson(rawMonth);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
