@@ -44,29 +44,27 @@ class StaffAttendanceStatusController extends AsyncNotifier<StaffStatusState> {
     final getStaffShift = ref.read(getStaffShiftControllerProvider);
     final currentTime = DateTime.now();
 
-    bool isLateEntry = false;
-    bool isLateExit = false;
+    bool isLate = false;
 
     if (location is LocationDataState) {
       if (location.inCampus) {
         getStaffShift.when(
           data: (data) {
-            data is StaffShiftDataState
-                ? isLateEntry = currentTime.isBefore(data.startShift)
-                : false;
-            data is StaffShiftDataState
-                ? isLateExit = currentTime.isAfter(data.endShift)
-                : false;
+            return data is StaffShiftDataState
+                ? type == "clock_in"
+                      ? isLate = currentTime.isAfter(data.startShift)
+                      : isLate = currentTime.isAfter(data.endShift)
+                : isLate = false;
           },
           error: (error, stackTrace) => null,
           loading: () => null,
         );
+
         setStaffStatus(
           SetStaffAttendanceStatusUsecaseParmas(
             staffEntry: StaffAttendanceEntry(
               entry: currentTime,
-              isLateEntry: isLateEntry,
-              isLateExit: isLateExit,
+              isLate: isLate,
               type: type,
             ),
           ),

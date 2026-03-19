@@ -3,34 +3,29 @@ import 'package:staff_app/features/home/data/models/staff_history_data_model.dar
 class StaffAttendanceEntry {
   final DateTime entry;
   final String type;
-  final bool isLateEntry;
-  final bool isLateExit; // "clock_in" | "clock_out"
+  final bool isLate;
 
   StaffAttendanceEntry({
     required this.entry,
     required this.type,
-    required this.isLateEntry,
-    required this.isLateExit,
+    required this.isLate,
   });
 
-  /// Convert event → updated day state
-  StaffHistoryDataModel toHistoryModel({required StaffHistoryDataModel model}) {
-    if (type == "clock_in") {
-      return StaffHistoryDataModel(
-        clockIn: entry,
-        clockOut: model.clockOut,
-        lateEntry: model.lateEntry,
-        lateExit: model.lateExit,
-        status: type,
-      );
-    } else {
-      return StaffHistoryDataModel(
-        clockIn: model.clockIn,
-        clockOut: entry,
-        lateEntry: model.lateEntry,
-        lateExit: model.lateExit,
-        status: type,
-      );
-    }
+  StaffHistoryDataModel toHistoryModel(StaffHistoryDataModel? model) {
+    return type == "clock_in"
+        ? StaffHistoryDataModel(
+            clockIn: entry,
+            clockOut: model?.clockOut,
+            lateEntry: isLate,
+            lateExit: model?.lateExit ?? false,
+            status: isLate ? "Late" : "Present",
+          )
+        : StaffHistoryDataModel(
+            clockIn: model?.clockIn,
+            clockOut: entry,
+            lateEntry: model?.lateExit ?? false,
+            lateExit: isLate,
+            status: isLate ? "Late" : "Present",
+          );
   }
 }

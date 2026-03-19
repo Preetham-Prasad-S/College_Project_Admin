@@ -3,6 +3,7 @@ import 'package:staff_app/core/exceptions.dart';
 import 'package:staff_app/core/failures.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
+import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
 import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
 import 'package:staff_app/features/home/domain/entities/college_holiday.dart';
 
@@ -88,24 +89,22 @@ class HomeRepositoryImpl implements HomeRepository {
     StaffAttendanceEntry staffEntry,
   ) async {
     try {
-      final now = staffEntry.entry;
-
-      // 1. Get existing month data
-      final monthlyHistory = await dataSource.getCurrentMonthHistory(now);
-
-      // 2. Get today's data (if exists)
-      final existing = monthlyHistory.historyData[now.day];
-
-      // 3. Convert event → updated state
-      final updatedDay = staffEntry.toHistoryModel(
-        model: monthlyHistory.historyData[staffEntry.entryd],
+      final staffStatus = await dataSource.getCurrentMonthHistory(
+        staffEntry.entry,
       );
 
-      // 4. Update only this day
+      final currentDateStaffStatus = staffStatus.historyData[19];
+
       await dataSource.setCurrentMonthHistory(
-        year: now.year,
-        month: now.month,
-        model: StaffMonthlyHistoryModel(historyData: {now.day: updatedDay}),
+        month: staffEntry.entry.month,
+        year: staffEntry.entry.year,
+        model: StaffMonthlyHistoryModel(
+          historyData: {
+            staffEntry.entry.day: staffEntry.toHistoryModel(
+              currentDateStaffStatus,
+            ),
+          },
+        ),
       );
 
       return right(null);

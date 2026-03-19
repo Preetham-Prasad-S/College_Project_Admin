@@ -11,5 +11,5 @@ class StaffTimestamp {
   }
 
   @override
-  String toString() => 'StaffHistory(clockIn: $clockIn, clockOut: $clockOut)';
+  String toString() => 'StaffTimestamp(clockIn: $clockIn, clockOut: $clockOut)';
 }

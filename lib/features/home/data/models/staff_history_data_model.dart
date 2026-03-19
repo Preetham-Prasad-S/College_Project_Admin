@@ -1,8 +1,8 @@
 class StaffHistoryDataModel {
   final DateTime? clockIn;
   final DateTime? clockOut;
-  final bool lateEntry;
-  final bool lateExit;
+  final bool? lateEntry;
+  final bool? lateExit;
   final String status;
 
   StaffHistoryDataModel({
