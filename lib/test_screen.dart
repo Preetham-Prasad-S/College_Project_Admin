@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
+import 'package:staff_app/features/auth/data/datasource/auth_datasource_impl.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
 import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
@@ -24,75 +26,12 @@ class TestScreen extends ConsumerWidget {
 
             ElevatedButton(
               onPressed: () async {
-                // await HomeDatasourceImpl(
-                //   firebaseInstance: FirebaseFirestore.instance,
-                // ).setCurrentMonthHistory(
-                //   year: 2026,
-                //   month: 3,
-                //   model: StaffMonthlyHistoryModel(
-                //     historyData: {
-                //       19: StaffHistoryDataModel(
-                //         clockIn: DateTime.now(),
-                //         clockOut: DateTime.now(),
-                //         lateEntry: false,
-                //         lateExit: false,
-                //         status: "clock_in",
-                //       ),
-                //     },
-                //   ),
-                // );
+                final login = await AuthDatasourceImpl(
+                  firebaseAuth: FirebaseAuth.instance,
+                ).login(email: "test@gmail.com", password: "123456");
 
-                // final d = await HomeDatasourceImpl(
-                //   firebaseInstance: FirebaseFirestore.instance,
-                // ).getCurrentMonthHistory(DateTime.now());
-
-                // final d =
-                //     HomeDatasourceImpl(
-                //       firebaseInstance: FirebaseFirestore.instance,
-                //     ).setCurrentMonthHistory(
-                //       year: 2026,
-                //       month: 3,
-                //       model: StaffMonthlyHistoryModel(
-                //         historyData: {
-                //           19: StaffHistoryDataModel(
-                //             clockIn: DateTime.now(),
-                //             clockOut: DateTime.now(),
-                //             lateEntry: false,
-                //             lateExit: true,
-                //             status: "Present",
-                //           ),
-                //         },
-                //       ),
-                //     );
-
-                final r = HomeRepositoryImpl(
-                  dataSource: HomeDatasourceImpl(
-                    firebaseInstance: FirebaseFirestore.instance,
-                  ),
-                  locationService: GeolocatorService(),
-                );
-
-                final u = GetStaffAttendanceStatusUsecase(repository: r);
-
-                final result = await u(
-                  GetStaffAttendanceStatusUsecaseParams(
-                    currentTime: DateTime.now(),
-                  ),
-                );
-
-                result.fold((l) => print(l), (r) => print(r));
-
-                // final u = GetStaffAttendanceStatusUsecase(repository: r);
-
-                // final result = await u(
-                //   GetStaffAttendanceStatusUsecaseParams(
-                //     currentTime: DateTime.now(),
-                //   ),
-                // );
-
-                // result.fold((l) => print(l), (r) => print(r));
+                FirebaseAuth.instance.signOut();
               },
-
               child: Text("Get Working Days"),
             ),
           ],

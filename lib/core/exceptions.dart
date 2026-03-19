@@ -18,6 +18,12 @@ class DataException implements AppException {
   DataException({required this.message});
 }
 
+class AuthException implements AppException {
+  @override
+  final String message;
+  AuthException({required this.message});
+}
+
 class ServerException implements AppException {
   @override
   final String message;
