@@ -23,7 +23,7 @@ class StaffAttendanceEntry {
         : StaffHistoryDataModel(
             clockIn: model?.clockIn,
             clockOut: entry,
-            lateEntry: model?.lateExit ?? false,
+            lateEntry: model?.lateEntry ?? false,
             lateExit: isLate,
             status: isLate ? "Late" : "Present",
           );

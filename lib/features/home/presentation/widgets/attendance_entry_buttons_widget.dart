@@ -39,13 +39,13 @@ class AttendanceEntryButtonsWidget extends ConsumerWidget {
               ),
             ),
           ),
-          onPressed: () {
+          onPressed: () async {
             if (clockedInstate) {
-              ref
+              await ref
                   .read(staffAttendanceStatusControllerProvider.notifier)
                   .attendancEntry("clock_in");
-              ref.refresh(staffAttendanceStatusControllerProvider);
               ref.refresh(attendancePercentageControllerProvider);
+              ref.refresh(staffAttendanceStatusControllerProvider);
             }
           },
           child: Row(
@@ -95,13 +95,13 @@ class AttendanceEntryButtonsWidget extends ConsumerWidget {
               ),
             ),
           ),
-          onPressed: () {
+          onPressed: () async {
             if (clockedOutstate) {
-              ref
+              await ref
                   .read(staffAttendanceStatusControllerProvider.notifier)
                   .attendancEntry("clock_out");
-              ref.refresh(staffAttendanceStatusControllerProvider);
               ref.refresh(attendancePercentageControllerProvider);
+              ref.refresh(staffAttendanceStatusControllerProvider);
             }
           },
           child: Row(

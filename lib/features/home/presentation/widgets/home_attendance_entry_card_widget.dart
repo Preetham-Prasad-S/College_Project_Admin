@@ -188,7 +188,7 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
 
             staffShiftState.when(
               data: (data) => Text(
-                "Shift : ${data is StaffShiftDataState ? DateFormat("hh:mm a").format((data.endShift)) : "--:--:--"}  - ${data is StaffShiftDataState ? DateFormat("hh:mm a").format((data.startShift)) : "--:--:--"} ",
+                "Shift : ${data is StaffShiftDataState ? DateFormat("hh:mm a").format((data.startShift)) : "--:--:--"}  - ${data is StaffShiftDataState ? DateFormat("hh:mm a").format((data.endShift)) : "--:--:--"} ",
                 style: TextStyle(
                   height: 2,
                   color: const Color.fromRGBO(255, 255, 255, 0.7),
