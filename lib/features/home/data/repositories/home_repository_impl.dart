@@ -16,14 +16,18 @@ import 'package:staff_app/features/home/domain/entities/working_days.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
-  final HomeDatasource dataSource;
-  final LocationService locationService;
+  final HomeDatasource _datasource;
+  final LocationService _locationService;
 
-  HomeRepositoryImpl({required this.dataSource, required this.locationService});
+  HomeRepositoryImpl({
+    required HomeDatasource datasource,
+    required LocationService locationService,
+  }) : _datasource = datasource,
+       _locationService = locationService;
   @override
   Stream<Either<AppFailure, CollegeLocation>> currentLocation() async* {
     try {
-      final locationStream = locationService.getCurrentLocation();
+      final locationStream = _locationService.getCurrentLocation();
 
       yield* locationStream.map((position) {
         return right(CollegeLocation.fromService(position));
@@ -38,7 +42,7 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppFailure, CollegeLocation>> getCollegeLocation() async {
     try {
-      final collegeLocation = await dataSource.getCollegeLocation();
+      final collegeLocation = await _datasource.getCollegeLocation();
 
       return right(CollegeLocation.fromModel(collegeLocation));
     } on ServerException catch (e) {
@@ -51,7 +55,7 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppFailure, StaffShift>> getStaffShift() async {
     try {
-      final staffShift = await dataSource.getStaffShift();
+      final staffShift = await _datasource.getStaffShift();
 
       return right(StaffShift.fromModel(staffShift));
     } on ServerException catch (e) {
@@ -66,7 +70,11 @@ class HomeRepositoryImpl implements HomeRepository {
     DateTime dateTime,
   ) async {
     try {
-      final staffHistory = await dataSource.getCurrentMonthHistory(dateTime);
+      final staffHistory = await _datasource.getCurrentMonthHistory(dateTime);
+
+      if (staffHistory == null) {
+        return right(StaffTimestamp(clockIn: null, clockOut: null));
+      }
 
       final data = staffHistory.historyData[dateTime.day];
 
@@ -77,8 +85,6 @@ class HomeRepositoryImpl implements HomeRepository {
       return right(StaffTimestamp.fromModel(data));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
-    } on DataException catch (e) {
-      return right(StaffTimestamp(clockIn: null, clockOut: null));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }
@@ -89,13 +95,16 @@ class HomeRepositoryImpl implements HomeRepository {
     StaffAttendanceEntry staffEntry,
   ) async {
     try {
-      final staffStatus = await dataSource.getCurrentMonthHistory(
+      StaffHistoryDataModel? currentDateStaffStatus;
+      final staffStatus = await _datasource.getCurrentMonthHistory(
         staffEntry.entry,
       );
 
-      final currentDateStaffStatus = staffStatus.historyData[19];
+      if (staffStatus != null) {
+        currentDateStaffStatus = staffStatus.historyData[staffEntry.entry.day];
+      }
 
-      await dataSource.setCurrentMonthHistory(
+      await _datasource.setCurrentMonthHistory(
         month: staffEntry.entry.month,
         year: staffEntry.entry.year,
         model: StaffMonthlyHistoryModel(
@@ -120,7 +129,7 @@ class HomeRepositoryImpl implements HomeRepository {
     DateTime dateTime,
   ) async {
     try {
-      final holidayDays = await dataSource.getHolidayDays(dateTime);
+      final holidayDays = await _datasource.getHolidayDays(dateTime);
 
       return right(CollegeHolidays.fromModel(holidayDays));
     } on ServerException catch (e) {
@@ -134,10 +143,16 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<AppFailure, WorkingDays>> getAttendedDays(
     DateTime dateTime,
   ) async {
-    try {
-      final monthHistory = await dataSource.getCurrentMonthHistory(dateTime);
+    int workingDays = 0;
 
-      return right(WorkingDays(workingDays: monthHistory.historyData.length));
+    try {
+      final monthHistory = await _datasource.getCurrentMonthHistory(dateTime);
+
+      if (monthHistory != null) {
+        workingDays = monthHistory.historyData.length;
+      }
+
+      return right(WorkingDays(workingDays: workingDays));
     } on ServerException catch (e) {
       return left(AppFailure(message: e.message));
     } catch (e) {

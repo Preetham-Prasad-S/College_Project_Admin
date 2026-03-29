@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
@@ -26,11 +27,18 @@ class TestScreen extends ConsumerWidget {
 
             ElevatedButton(
               onPressed: () async {
-                final login = await AuthDatasourceImpl(
-                  firebaseAuth: FirebaseAuth.instance,
-                ).login(email: "test@gmail.com", password: "123456");
+                final d = HomeDatasourceImpl(
+                  firebaseInstance: FirebaseFirestore.instance,
+                );
 
-                FirebaseAuth.instance.signOut();
+                final r = HomeRepositoryImpl(
+                  dataSource: d,
+                  locationService: GeolocatorService(),
+                );
+
+                final result = await d.getCurrentMonthHistory(DateTime.now());
+
+                print(result);
               },
               child: Text("Get Working Days"),
             ),

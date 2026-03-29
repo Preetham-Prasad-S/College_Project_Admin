@@ -100,7 +100,7 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<StaffMonthlyHistoryModel> getCurrentMonthHistory(
+  Future<StaffMonthlyHistoryModel?> getCurrentMonthHistory(
     DateTime currentDateTime,
   ) async {
     try {
@@ -112,29 +112,21 @@ class HomeDatasourceImpl implements HomeDatasource {
       final result = attendedDays.data();
 
       if (result == null || result.isEmpty) {
-        throw DataException(
-          message: "No History Found : HomeDatasource.getCurrentMonthHistory()",
-        );
+        return null;
       }
 
       final Map<String, dynamic>? yearResult =
           result["${currentDateTime.year}"];
 
       if (yearResult == null || yearResult.isEmpty) {
-        throw DataException(
-          message:
-              "No History Found  For Year ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
-        );
+        return null;
       }
 
       final Map<String, dynamic>? rawMonth =
           yearResult["${currentDateTime.month}"];
 
       if (rawMonth == null || rawMonth.isEmpty) {
-        throw DataException(
-          message:
-              "No History Found For month ${currentDateTime.year} : HomeDatasource.getCurrentMonthHistory()",
-        );
+        return null;
       }
 
       return StaffMonthlyHistoryModel.fromJson(rawMonth);

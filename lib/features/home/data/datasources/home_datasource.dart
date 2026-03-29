@@ -7,7 +7,7 @@ abstract interface class HomeDatasource {
   Future<CollegeHolidaysModel> getHolidayDays(DateTime dateTime);
   Future<StaffShiftModel> getStaffShift();
   Future<CollegeLocationModel> getCollegeLocation();
-  Future<StaffMonthlyHistoryModel> getCurrentMonthHistory(
+  Future<StaffMonthlyHistoryModel?> getCurrentMonthHistory(
     DateTime currentDateTime,
   );
   Future<void> setCurrentMonthHistory({
