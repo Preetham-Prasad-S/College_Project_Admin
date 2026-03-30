@@ -38,7 +38,7 @@ final geolocatorServiceProivder = Provider<LocationService>(
 
 final homeRepositoryProvider = Provider<HomeRepository>(
   (ref) => HomeRepositoryImpl(
-    dataSource: ref.read(homeDatasourceProvider),
+    datasource: ref.read(homeDatasourceProvider),
     locationService: ref.read(geolocatorServiceProivder),
   ),
 );
