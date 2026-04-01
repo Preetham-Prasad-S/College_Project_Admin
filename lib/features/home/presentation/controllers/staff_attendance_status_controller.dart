@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/failures.dart';
-import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
 import 'package:staff_app/features/home/dependency.dart';
 import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
 import 'package:staff_app/features/home/domain/entities/staff_status.dart';
@@ -51,7 +49,6 @@ class StaffAttendanceStatusController extends AsyncNotifier<StaffStatusState> {
       if (location.inCampus) {
         getStaffShift.when(
           data: (data) {
-            print((data as StaffShiftDataState).startShift);
             return data is StaffShiftDataState
                 ? type == "clock_in"
                       ? isLate = currentTime.isAfter(data.startShift)
