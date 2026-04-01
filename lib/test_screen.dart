@@ -36,7 +36,14 @@ class TestScreen extends ConsumerWidget {
                   locationService: GeolocatorService(),
                 );
 
-                final result = await d.getCurrentMonthHistory(DateTime.now());
+                final ad = AuthDatasourceImpl(
+                  firebaseAuth: FirebaseAuth.instance,
+                  firebaseFirestore: FirebaseFirestore.instance,
+                );
+
+                final result = await ad.authorize(
+                  FirebaseAuth.instance.currentUser!.uid,
+                );
 
                 print(result);
               },
