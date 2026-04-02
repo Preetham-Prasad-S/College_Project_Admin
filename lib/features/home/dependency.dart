@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/core/dependency.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
@@ -22,18 +23,10 @@ import 'package:staff_app/features/home/presentation/controllers/states/location
 import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
 
-final firebaseStoreageInstanceProvider = Provider<FirebaseFirestore>(
-  (ref) => FirebaseFirestore.instance,
-);
-
 final homeDatasourceProvider = Provider<HomeDatasource>(
   (ref) => HomeDatasourceImpl(
     firebaseInstance: ref.read(firebaseStoreageInstanceProvider),
   ),
-);
-
-final geolocatorServiceProivder = Provider<LocationService>(
-  (ref) => GeolocatorService(),
 );
 
 final homeRepositoryProvider = Provider<HomeRepository>(

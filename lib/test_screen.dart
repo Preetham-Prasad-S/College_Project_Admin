@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/features/auth/data/datasource/auth_datasource_impl.dart';
+import 'package:staff_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:staff_app/features/auth/domain/enitites/auth_staff.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
 import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
@@ -41,8 +43,16 @@ class TestScreen extends ConsumerWidget {
                   firebaseFirestore: FirebaseFirestore.instance,
                 );
 
-                final result = await ad.authorize(
-                  FirebaseAuth.instance.currentUser!.uid,
+                final ar = AuthRepositoryImpl(
+                  authDatasource: ad,
+                  firebaseAuth: FirebaseAuth.instance,
+                );
+
+                final result = await ar.login(
+                  AuthStaff(
+                    email: "preetham2005105@gmail.com",
+                    password: "123456789",
+                  ),
                 );
 
                 print(result);

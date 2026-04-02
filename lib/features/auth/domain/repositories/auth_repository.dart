@@ -1,3 +1,8 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:staff_app/core/failures.dart';
+import 'package:staff_app/features/auth/domain/enitites/auth_staff.dart';
+import 'package:staff_app/features/auth/domain/enitites/staff.dart';
+
 abstract interface class AuthRepository {
-  Future<void> login();
+  Future<Either<AppFailure, Staff>> login(AuthStaff authStaff);
 }
