@@ -47,4 +47,29 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(AppFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<AppFailure, Staff?>> getCurrentUser() async {
+    try {
+      final currentUserId = await _authDatasource.getCurrentUserId();
+
+      if (currentUserId == null) {
+        return right(null);
+      }
+
+      final staff = await _authDatasource.authorize(currentUserId);
+
+      if (staff == null) {
+        return left(
+          AppFailure(
+            message: "Authorization Not Found : AuthRepository.getCurrentUser",
+          ),
+        );
+      }
+
+      return right(Staff.fromModel(staff));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
+    }
+  }
 }

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/core/services/service.dart';
+import 'package:staff_app/features/auth/domain/enitites/staff.dart';
 
 final firebaseStoreageInstanceProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
@@ -14,3 +16,5 @@ final firebaseAuthInstanceProvider = Provider<FirebaseAuth>(
 final geolocatorServiceProivder = Provider<LocationService>(
   (ref) => GeolocatorService(),
 );
+
+final currentUserProvider = StateProvider<Staff?>((ref) => null);

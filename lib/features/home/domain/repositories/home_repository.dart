@@ -15,6 +15,8 @@ abstract interface class HomeRepository {
   Future<Either<AppFailure, void>> setStaffStatus(
     StaffAttendanceEntry staffEntry,
   );
-  Future<Either<AppFailure, CollegeHolidays>> getHolidayDays(DateTime dateTime);
+  Future<Either<AppFailure, CollegeHolidays?>> getHolidayDays(
+    DateTime dateTime,
+  );
   Future<Either<AppFailure, WorkingDays>> getAttendedDays(DateTime dateTime);
 }

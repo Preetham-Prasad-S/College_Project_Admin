@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:staff_app/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:staff_app/features/auth/presentation/widgets/login_button_widget.dart';
@@ -19,29 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formkey = GlobalKey<FormState>();
 
-  bool _obscureText = true;
-
-  bool _rememberMe = false;
-
-  Future<void> login(String email, String password) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      //   email: email,
-      //   password: password,
-      // );
-      // print(credential.user);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error $e")));
-      }
-    }
-  }
+  final bool _rememberMe = false;
 
   @override
   Widget build(BuildContext context) {

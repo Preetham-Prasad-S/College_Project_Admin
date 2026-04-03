@@ -125,15 +125,16 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<AppFailure, CollegeHolidays>> getHolidayDays(
+  Future<Either<AppFailure, CollegeHolidays?>> getHolidayDays(
     DateTime dateTime,
   ) async {
     try {
       final holidayDays = await _datasource.getHolidayDays(dateTime);
 
-      return right(CollegeHolidays.fromModel(holidayDays));
-    } on ServerException catch (e) {
-      return left(AppFailure(message: "$e -> Repository"));
+      if (holidayDays != null) {
+        return right(CollegeHolidays.fromModel(holidayDays));
+      }
+      return right(null);
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }

@@ -26,6 +26,9 @@ class AuthException implements AppException {
   @override
   final String message;
   AuthException({required this.message});
+
+  @override
+  String toString() => 'AuthException(message: $message)';
 }
 
 class ServerException implements AppException {

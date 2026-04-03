@@ -4,7 +4,7 @@ import 'package:staff_app/features/home/data/models/staff_monthly_history_model.
 import 'package:staff_app/features/home/data/models/staff_shift_model.dart';
 
 abstract interface class HomeDatasource {
-  Future<CollegeHolidaysModel> getHolidayDays(DateTime dateTime);
+  Future<CollegeHolidaysModel?> getHolidayDays(DateTime dateTime);
   Future<StaffShiftModel> getStaffShift();
   Future<CollegeLocationModel> getCollegeLocation();
   Future<StaffMonthlyHistoryModel?> getCurrentMonthHistory(

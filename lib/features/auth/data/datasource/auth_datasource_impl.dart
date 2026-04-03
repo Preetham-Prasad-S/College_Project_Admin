@@ -51,4 +51,15 @@ class AuthDatasourceImpl implements AuthDatasource {
       throw AuthException(message: "$e : AuthDatasource.authorize()");
     }
   }
+
+  @override
+  Future<String?> getCurrentUserId() async {
+    final currentUser = _firebaseAuth.currentUser;
+
+    if (currentUser != null) {
+      return currentUser.uid;
+    }
+
+    return null;
+  }
 }

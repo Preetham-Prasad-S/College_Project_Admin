@@ -60,7 +60,7 @@ class HomeDatasourceImpl implements HomeDatasource {
   }
 
   @override
-  Future<CollegeHolidaysModel> getHolidayDays(DateTime dateTime) async {
+  Future<CollegeHolidaysModel?> getHolidayDays(DateTime dateTime) async {
     try {
       final holidayData = await _firebaseInstance
           .collection("college")
@@ -70,27 +70,19 @@ class HomeDatasourceImpl implements HomeDatasource {
       final holiday = holidayData.data();
 
       if (holiday == null || holiday.isEmpty) {
-        throw ServerException(
-          message: "No Holiday Data Found : HomeDatasource.getHolidayDays",
-        );
+        return null;
       }
 
       final Map<String, dynamic>? yearData = holiday["${dateTime.year}"];
 
       if (yearData == null || yearData.isEmpty) {
-        throw ServerException(
-          message:
-              "No Holiday Data Found For The Year ${dateTime.year} : HomeDatasource.getHolidayDays",
-        );
+        return null;
       }
 
       final List<dynamic>? monthData = yearData["${dateTime.month}"];
 
       if (monthData == null || monthData.isEmpty) {
-        throw ServerException(
-          message:
-              "No Holiday Data Found For The Month ${dateTime.month} : HomeDatasource.getHolidayDays",
-        );
+        return null;
       }
 
       return CollegeHolidaysModel.fromJson(monthData);

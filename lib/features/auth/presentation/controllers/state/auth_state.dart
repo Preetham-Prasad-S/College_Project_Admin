@@ -13,3 +13,5 @@ final class AuthFailureState implements AuthState {
 
   AuthFailureState({required this.message});
 }
+
+final class AuthInitialState implements AuthState {}

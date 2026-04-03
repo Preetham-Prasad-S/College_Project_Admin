@@ -34,40 +34,57 @@ class GetAttendancePercentageUsecase
 
     return attendedDays.fold((failure) => left(failure), (WorkingDays workDay) {
       return holidayDays.fold((failure) => left(failure), (
-        CollegeHolidays holidays,
+        CollegeHolidays? holidays,
       ) {
-        int daysPassed = today.difference(monthStart).inDays + 1;
+        if (holidays != null) {
+          final percentage = calculateAttendancePercentage(
+            today,
+            monthStart,
+            holidays,
+            workDay,
+          );
 
-        int sundayCount = 0;
-
-        for (int i = 0; i < daysPassed; i++) {
-          final day = monthStart.add(Duration(days: i));
-
-          if (day.weekday == DateTime.sunday) {
-            sundayCount++;
-          }
+          return right(AttendancePercentage(percentage: percentage));
         }
 
-        int holidayCount =
-            holidays.holidayDates
-                ?.where(
-                  (h) =>
-                      h.date.isBefore(today) || h.date.isAtSameMomentAs(today),
-                )
-                .length ??
-            0;
-
-        int workingDaysPassed = daysPassed - sundayCount - holidayCount;
-
-        double percentage = 0;
-
-        if (workingDaysPassed > 0) {
-          percentage = (workDay.workingDays! / workingDaysPassed) * 100;
-        }
-
-        return right(AttendancePercentage(percentage: percentage));
+        return right(AttendancePercentage(percentage: 0));
       });
     });
+  }
+
+  double calculateAttendancePercentage(
+    DateTime today,
+    DateTime monthStart,
+    CollegeHolidays holidays,
+    WorkingDays workDay,
+  ) {
+    int daysPassed = today.difference(monthStart).inDays + 1;
+
+    int sundayCount = 0;
+
+    for (int i = 0; i < daysPassed; i++) {
+      final day = monthStart.add(Duration(days: i));
+
+      if (day.weekday == DateTime.sunday) {
+        sundayCount++;
+      }
+    }
+
+    int holidayCount =
+        holidays.holidayDates
+            ?.where(
+              (h) => h.date.isBefore(today) || h.date.isAtSameMomentAs(today),
+            )
+            .length ??
+        0;
+
+    int workingDaysPassed = daysPassed - sundayCount - holidayCount;
+
+    if (workingDaysPassed > 0) {
+      return (workDay.workingDays! / workingDaysPassed) * 100;
+    }
+
+    return 0;
   }
 }
 

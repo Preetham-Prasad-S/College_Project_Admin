@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/features/auth/dependency.dart';
 
-class LoginButtonWidget extends StatefulWidget {
+class LoginButtonWidget extends ConsumerStatefulWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -13,10 +14,10 @@ class LoginButtonWidget extends StatefulWidget {
   });
 
   @override
-  State<LoginButtonWidget> createState() => _LoginButtonWidgetState();
+  ConsumerState<LoginButtonWidget> createState() => _LoginButtonWidgetState();
 }
 
-class _LoginButtonWidgetState extends State<LoginButtonWidget> {
+class _LoginButtonWidgetState extends ConsumerState<LoginButtonWidget> {
   late GlobalKey<FormState> _formKey;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -29,28 +30,19 @@ class _LoginButtonWidgetState extends State<LoginButtonWidget> {
     super.initState();
   }
 
-  Future<void> login(String email, String password) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      //   email: email,
-      //   password: password,
-      // );
-      // print(credential.user);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error $e")));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    ref.listen(authControllerProvider, (_, state) {
+      state.whenOrNull(
+        error: (error, stackTrace) => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("$error"))),
+      );
+    });
+
+    final authState = ref.watch(authControllerProvider);
+    final authController = ref.read(authControllerProvider.notifier);
+
     return TextButton(
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
@@ -59,7 +51,7 @@ class _LoginButtonWidgetState extends State<LoginButtonWidget> {
           // Navigator.of(context).pushReplacement(
           //   MaterialPageRoute(builder: (context) => HomeScreen()),
           // );
-          await login(
+          await authController.login(
             _emailController.text.trim(),
             _passwordController.text.trim(),
           );
@@ -79,16 +71,35 @@ class _LoginButtonWidgetState extends State<LoginButtonWidget> {
           ),
         ),
       ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "SIGN IN",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(width: 10),
-          Icon(Icons.exit_to_app, size: 26),
-        ],
+      child: authState.when(
+        data: (data) => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "SIGN IN",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 10),
+            Icon(Icons.exit_to_app, size: 26),
+          ],
+        ),
+        error: (error, stackTrace) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "SIGN IN",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 10),
+              Icon(Icons.exit_to_app, size: 26),
+            ],
+          );
+        },
+        loading: () => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [CircularProgressIndicator(color: Colors.white)],
+        ),
       ),
     );
   }

@@ -48,12 +48,7 @@ class TestScreen extends ConsumerWidget {
                   firebaseAuth: FirebaseAuth.instance,
                 );
 
-                final result = await ar.login(
-                  AuthStaff(
-                    email: "preetham2005105@gmail.com",
-                    password: "123456789",
-                  ),
-                );
+                final result = await d.getHolidayDays(DateTime.now());
 
                 print(result);
               },

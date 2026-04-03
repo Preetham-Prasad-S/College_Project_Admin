@@ -5,20 +5,20 @@ import 'package:staff_app/features/auth/domain/enitites/auth_staff.dart';
 import 'package:staff_app/features/auth/domain/enitites/staff.dart';
 import 'package:staff_app/features/auth/domain/repositories/auth_repository.dart';
 
-class Login implements FutureUsecase<Staff, LoginParams> {
+class LoginUsecase implements FutureUsecase<Staff, LoginUsecaseParams> {
   final AuthRepository _authRespository;
 
-  Login({required AuthRepository authRespository})
+  LoginUsecase({required AuthRepository authRespository})
     : _authRespository = authRespository;
 
   @override
-  Future<Either<AppFailure, Staff>> call(LoginParams params) async {
+  Future<Either<AppFailure, Staff>> call(LoginUsecaseParams params) async {
     return await _authRespository.login(params.authStaff);
   }
 }
 
-class LoginParams {
+class LoginUsecaseParams {
   final AuthStaff authStaff;
 
-  LoginParams({required this.authStaff});
+  LoginUsecaseParams({required this.authStaff});
 }
