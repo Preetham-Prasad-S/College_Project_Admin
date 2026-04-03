@@ -48,7 +48,7 @@ class TestScreen extends ConsumerWidget {
                   firebaseAuth: FirebaseAuth.instance,
                 );
 
-                final result = await d.getHolidayDays(DateTime.now());
+                final result = await r.getLateDays(DateTime.now());
 
                 print(result);
               },

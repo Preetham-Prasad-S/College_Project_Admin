@@ -19,4 +19,6 @@ abstract interface class HomeRepository {
     DateTime dateTime,
   );
   Future<Either<AppFailure, WorkingDays>> getAttendedDays(DateTime dateTime);
+
+  Future<Either<AppFailure, WorkingDays>> getLateDays(DateTime dateTime);
 }

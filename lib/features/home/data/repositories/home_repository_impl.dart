@@ -45,8 +45,6 @@ class HomeRepositoryImpl implements HomeRepository {
       final collegeLocation = await _datasource.getCollegeLocation();
 
       return right(CollegeLocation.fromModel(collegeLocation));
-    } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }
@@ -58,8 +56,6 @@ class HomeRepositoryImpl implements HomeRepository {
       final staffShift = await _datasource.getStaffShift();
 
       return right(StaffShift.fromModel(staffShift));
-    } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }
@@ -83,8 +79,6 @@ class HomeRepositoryImpl implements HomeRepository {
       }
 
       return right(StaffTimestamp.fromModel(data));
-    } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }
@@ -117,8 +111,6 @@ class HomeRepositoryImpl implements HomeRepository {
       );
 
       return right(null);
-    } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }
@@ -154,8 +146,27 @@ class HomeRepositoryImpl implements HomeRepository {
       }
 
       return right(WorkingDays(workingDays: workingDays));
-    } on ServerException catch (e) {
-      return left(AppFailure(message: e.message));
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AppFailure, WorkingDays>> getLateDays(DateTime dateTime) async {
+    int lateDays = 0;
+
+    try {
+      final monthHistory = await _datasource.getCurrentMonthHistory(dateTime);
+
+      if (monthHistory != null) {
+        monthHistory.historyData.mapValue((value) {
+          if (value.status == "Late") {
+            lateDays++;
+          }
+        });
+      }
+
+      return right(WorkingDays(workingDays: lateDays));
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }
