@@ -12,6 +12,7 @@ import 'package:staff_app/features/home/data/models/staff_history_data_model.dar
 import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
 import 'package:staff_app/features/home/domain/entities/staff_attendance_entry.dart';
+import 'package:staff_app/features/home/domain/usescases/get_attendance_details_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_attendance_percentage_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
 
@@ -48,7 +49,13 @@ class TestScreen extends ConsumerWidget {
                   firebaseAuth: FirebaseAuth.instance,
                 );
 
-                final result = await r.getLateDays(DateTime.now());
+                final u = GetAttendanceDetailsUsecase(repository: r);
+
+                final result = await u(
+                  GetAttendanceDetailsUsecaseParams(
+                    currentTime: DateTime.now(),
+                  ),
+                );
 
                 print(result);
               },

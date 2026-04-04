@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:staff_app/features/home/dependency.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/attendance_details_state.dart';
 
-class AttendanceDetailsWidget extends StatelessWidget {
+class AttendanceDetailsWidget extends ConsumerWidget {
   const AttendanceDetailsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final attendanceDetail = ref.watch(attendanceDetailsController);
+
     return Row(
       children: [
         Expanded(
@@ -46,7 +51,18 @@ class AttendanceDetailsWidget extends StatelessWidget {
                 ),
 
                 Text(
-                  "18",
+                  attendanceDetail.when(
+                    data: (data) {
+                      if (data is AttendanceDetailsSuccess) {
+                        return data.presentDays > 9
+                            ? "${data.presentDays}"
+                            : "0${data.presentDays}";
+                      }
+                      return "--";
+                    },
+                    error: (error, stackTrace) => "--",
+                    loading: () => "--",
+                  ),
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -100,7 +116,19 @@ class AttendanceDetailsWidget extends StatelessWidget {
                 ),
 
                 Text(
-                  "01",
+                  attendanceDetail.when(
+                    data: (data) {
+                      if (data is AttendanceDetailsSuccess) {
+                        return data.presentDays > 9
+                            ? "${data.absentDays}"
+                            : "0${data.absentDays}";
+                      }
+                      return "--";
+                    },
+                    error: (error, stackTrace) => "--",
+                    loading: () => "--",
+                  ),
+
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -154,7 +182,19 @@ class AttendanceDetailsWidget extends StatelessWidget {
                 ),
 
                 Text(
-                  "02",
+                  attendanceDetail.when(
+                    data: (data) {
+                      if (data is AttendanceDetailsSuccess) {
+                        return data.presentDays > 9
+                            ? "${data.lateDays}"
+                            : "0${data.lateDays}";
+                      }
+                      return "--";
+                    },
+                    error: (error, stackTrace) => "--",
+                    loading: () => "--",
+                  ),
+
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 Text(

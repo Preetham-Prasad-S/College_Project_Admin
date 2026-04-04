@@ -37,29 +37,35 @@ class StaffAttendanceStatusController extends AsyncNotifier<StaffStatusState> {
     );
   }
 
-  Future<void> attendancEntry(String type) async {
-    final setStaffStatus = ref.read(setStaffAttendanceStatusUsecaseProvider);
-    final location = await ref.read(staffLocationControllerProvider.future);
-    final getStaffShift = ref.read(getStaffShiftControllerProvider);
-    final currentTime = DateTime.now();
+  Future<void> attendanceEntry(String type) async {
+    // Optimistically update the state immediately for instant UI feedback
+    final newState = type == "clock_in"
+        ? StaffStatusClockedInState()
+        : StaffStatusCompletedState();
+    state = AsyncValue.data(newState); // Update UI right away
 
-    bool isLate = false;
+    try {
+      final setStaffStatus = ref.read(setStaffAttendanceStatusUsecaseProvider);
+      final location = await ref.read(staffLocationControllerProvider.future);
+      final getStaffShift = ref.read(getStaffShiftControllerProvider);
+      final currentTime = DateTime.now();
 
-    if (location is LocationDataState) {
-      if (location.inCampus) {
+      bool isLate = false;
+
+      if (location is LocationDataState && location.inCampus) {
         getStaffShift.when(
           data: (data) {
-            return data is StaffShiftDataState
-                ? type == "clock_in"
-                      ? isLate = currentTime.isAfter(data.startShift)
-                      : isLate = currentTime.isAfter(data.endShift)
-                : isLate = false;
+            if (data is StaffShiftDataState) {
+              isLate = type == "clock_in"
+                  ? currentTime.isAfter(data.startShift)
+                  : currentTime.isAfter(data.endShift);
+            }
           },
           error: (error, stackTrace) => null,
           loading: () => null,
         );
 
-        await setStaffStatus(
+        final result = await setStaffStatus(
           SetStaffAttendanceStatusUsecaseParmas(
             staffEntry: StaffAttendanceEntry(
               entry: currentTime,
@@ -68,7 +74,15 @@ class StaffAttendanceStatusController extends AsyncNotifier<StaffStatusState> {
             ),
           ),
         );
+
+        result.fold((AppFailure failure) {
+          ref.invalidateSelf();
+        }, (_) => {});
+      } else {
+        ref.invalidateSelf();
       }
+    } catch (e) {
+      ref.invalidateSelf();
     }
   }
 }

@@ -9,15 +9,18 @@ import 'package:staff_app/features/home/data/repositories/home_repository_impl.d
 import 'package:staff_app/features/home/domain/entities/attendance_percentage.dart';
 import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
+import 'package:staff_app/features/home/domain/usescases/get_attendance_details_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_location_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_attendance_percentage_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/set_staff_attendance_status_usecase.dart';
+import 'package:staff_app/features/home/presentation/controllers/attendance_details_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/attendance_percentage_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_attendance_status_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_location_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_shift_controller.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/attendance_details_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/attendance_percentage_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
@@ -83,3 +86,15 @@ final attendancePercentageControllerProvider =
       AttendancePercentageController,
       AttendancePercentageState
     >(() => AttendancePercentageController());
+
+final getAttendanceDetailsUsecaseProvider =
+    Provider<GetAttendanceDetailsUsecase>(
+      (ref) => GetAttendanceDetailsUsecase(
+        repository: ref.read(homeRepositoryProvider),
+      ),
+    );
+
+final attendanceDetailsController =
+    AsyncNotifierProvider<AttendanceDetailsController, AttendanceDetailsState>(
+      () => AttendanceDetailsController(),
+    );

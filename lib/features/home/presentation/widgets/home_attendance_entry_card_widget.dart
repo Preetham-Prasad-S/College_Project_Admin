@@ -129,60 +129,9 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 15),
-            SizedBox(
-              height: 80,
-              child: locationState.when(
-                data: (location) {
-                  if (location is LocationDataState) {
-                    if (location.inCampus) {
-                      return staffAttendanceStatusState.when(
-                        data: (data) {
-                          if (data is StaffStatusClockedInState) {
-                            return AttendanceEntryButtonsWidget(
-                              clockedInstate: false,
-                              clockedOutstate: true,
-                            );
-                          } else if (data is StaffStatusClockedOutState) {
-                            return AttendanceEntryButtonsWidget(
-                              clockedInstate: true,
-                              clockedOutstate: false,
-                            );
-                          }
-                          return AttendanceEntryButtonsWidget(
-                            clockedInstate: false,
-                            clockedOutstate: false,
-                          );
-                        },
-                        error: (error, stackTrace) =>
-                            AttendanceEntryButtonsWidget(
-                              clockedInstate: false,
-                              clockedOutstate: false,
-                            ),
-                        loading: () => AttendanceEntryButtonsWidget(
-                          clockedInstate: false,
-                          clockedOutstate: false,
-                        ),
-                      );
-                    }
-                    return AttendanceEntryButtonsWidget(
-                      clockedInstate: false,
-                      clockedOutstate: false,
-                    );
-                  }
-                  return AttendanceEntryButtonsWidget(
-                    clockedInstate: false,
-                    clockedOutstate: false,
-                  );
-                },
-                error: (error, stackTrace) => AttendanceEntryButtonsWidget(
-                  clockedInstate: false,
-                  clockedOutstate: false,
-                ),
-                loading: () => AttendanceEntryButtonsWidget(
-                  clockedInstate: false,
-                  clockedOutstate: false,
-                ),
-              ),
+            AttendanceEntryButtonState(
+              locationState: locationState,
+              staffAttendanceStatusState: staffAttendanceStatusState,
             ),
             SizedBox(height: 10),
 
@@ -232,6 +181,75 @@ class HomeAttendanceEntryCardWidget extends ConsumerWidget {
             ),
             SizedBox(height: 25),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class AttendanceEntryButtonState extends StatelessWidget {
+  const AttendanceEntryButtonState({
+    super.key,
+    required this.locationState,
+    required this.staffAttendanceStatusState,
+  });
+
+  final AsyncValue<LocationState> locationState;
+  final AsyncValue<StaffStatusState> staffAttendanceStatusState;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 80,
+      child: locationState.when(
+        data: (location) {
+          if (location is LocationDataState) {
+            if (location.inCampus) {
+              return staffAttendanceStatusState.when(
+                data: (data) {
+                  if (data is StaffStatusClockedInState) {
+                    return AttendanceEntryButtonsWidget(
+                      clockedInstate: false,
+                      clockedOutstate: true,
+                    );
+                  } else if (data is StaffStatusClockedOutState) {
+                    return AttendanceEntryButtonsWidget(
+                      clockedInstate: true,
+                      clockedOutstate: false,
+                    );
+                  }
+                  return AttendanceEntryButtonsWidget(
+                    clockedInstate: false,
+                    clockedOutstate: false,
+                  );
+                },
+                error: (error, stackTrace) => AttendanceEntryButtonsWidget(
+                  clockedInstate: false,
+                  clockedOutstate: false,
+                ),
+                loading: () => AttendanceEntryButtonsWidget(
+                  clockedInstate: false,
+                  clockedOutstate: false,
+                ),
+              );
+            }
+            return AttendanceEntryButtonsWidget(
+              clockedInstate: false,
+              clockedOutstate: false,
+            );
+          }
+          return AttendanceEntryButtonsWidget(
+            clockedInstate: false,
+            clockedOutstate: false,
+          );
+        },
+        error: (error, stackTrace) => AttendanceEntryButtonsWidget(
+          clockedInstate: false,
+          clockedOutstate: false,
+        ),
+        loading: () => AttendanceEntryButtonsWidget(
+          clockedInstate: false,
+          clockedOutstate: false,
         ),
       ),
     );
