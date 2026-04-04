@@ -1,15 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/core/dependency.dart';
-import 'package:staff_app/core/services/geolocator_service.dart';
-import 'package:staff_app/core/services/service.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/repositories/home_repository_impl.dart';
-import 'package:staff_app/features/home/domain/entities/attendance_percentage.dart';
-import 'package:staff_app/features/home/domain/entities/staff_shift.dart';
 import 'package:staff_app/features/home/domain/repositories/home_repository.dart';
 import 'package:staff_app/features/home/domain/usescases/get_attendance_details_usecase.dart';
+import 'package:staff_app/features/home/domain/usescases/get_holiday_details_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_location_usecase.dart';
 import 'package:staff_app/features/home/domain/usescases/get_staff_shift_usecase.dart';
@@ -17,11 +13,13 @@ import 'package:staff_app/features/home/domain/usescases/get_attendance_percenta
 import 'package:staff_app/features/home/domain/usescases/set_staff_attendance_status_usecase.dart';
 import 'package:staff_app/features/home/presentation/controllers/attendance_details_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/attendance_percentage_controller.dart';
+import 'package:staff_app/features/home/presentation/controllers/college_holiday_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_attendance_status_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_location_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/staff_shift_controller.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/attendance_details_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/attendance_percentage_state.dart';
+import 'package:staff_app/features/home/presentation/controllers/states/college_holiday_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/location_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_shift_state.dart';
 import 'package:staff_app/features/home/presentation/controllers/states/staff_status_state.dart';
@@ -97,4 +95,14 @@ final getAttendanceDetailsUsecaseProvider =
 final attendanceDetailsController =
     AsyncNotifierProvider<AttendanceDetailsController, AttendanceDetailsState>(
       () => AttendanceDetailsController(),
+    );
+
+final getHolidayDetailsUsecaseProvider = Provider<GetHolidayDetailsUseCase>(
+  (ref) =>
+      GetHolidayDetailsUseCase(repository: ref.read(homeRepositoryProvider)),
+);
+
+final collegeHolidayControllerProvider =
+    AsyncNotifierProvider<CollegeHolidayController, CollegeHolidayState>(
+      () => CollegeHolidayController(),
     );
