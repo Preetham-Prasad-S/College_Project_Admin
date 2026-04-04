@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:staff_app/base_screen.dart';
 import 'package:staff_app/firebase_options.dart';
 import 'package:staff_app/features/auth/presentation/screens/login_screen.dart';
-import 'package:staff_app/test_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,4 +1,4 @@
-name: build-debug-apk-email
+name: build-release-apk-email
 
 permissions:
   contents: write
@@ -45,12 +45,12 @@ jobs:
         run: |
           sed -i "s/^version:.*/version: 1.0.${{ github.run_number }}+${{ github.run_number }}/" pubspec.yaml
 
-      - name: Build Debug APK
+      - name: Build Release APK
         run: flutter build apk --release
 
       - name: Verify APK Build
         run: |
-          if [ ! -f build/app/outputs/flutter-apk/app-debug.apk ]; then
+          if [ ! -f build/app/outputs/flutter-apk/app-release.apk ]; then
             echo "APK build failed"
             exit 1
           fi
@@ -58,13 +58,13 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir release
-          cp build/app/outputs/flutter-apk/app-debug.apk release/app-debug-${{ github.run_number }}.apk
+          cp build/app/outputs/flutter-apk/app-release.apk release/app-release-${{ github.run_number }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: debug-build-${{ github.run_id }}
-          name: Debug Build ${{ github.run_number }}
+          tag_name: release-build-${{ github.run_id }}
+          name: Release Build ${{ github.run_number }}
           files: release/*.apk
           draft: false
           prerelease: true
@@ -79,9 +79,9 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: New Debug APK Build - ${{ github.run_number }}
+          subject: New Release APK Build - ${{ github.run_number }}
           body: |
-            A new debug APK build is available
+            A new release APK build is available
 
             Commit Author:
               ${{ github.actor }}
@@ -92,7 +92,7 @@ jobs:
             ${{ github.event.head_commit.message }}
 
             Download APK directly:
-            https://github.com/${{ github.repository }}/releases/download/debug-build-${{ github.run_id }}/app-debug-${{ github.run_number }}.apk
+            https://github.com/${{ github.repository }}/releases/download/release-build-${{ github.run_id }}/app-release-${{ github.run_number }}.apk
 
           to: ${{ secrets.EMAIL_RECIPIENTS }}
           from: Flutter CI
