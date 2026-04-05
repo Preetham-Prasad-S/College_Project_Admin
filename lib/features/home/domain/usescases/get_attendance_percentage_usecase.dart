@@ -36,18 +36,14 @@ class GetAttendancePercentageUsecase
       return holidayDays.fold((failure) => left(failure), (
         CollegeHolidays? holidays,
       ) {
-        if (holidays != null) {
-          final percentage = calculateAttendancePercentage(
-            today,
-            monthStart,
-            holidays,
-            workDay,
-          );
+        final percentage = calculateAttendancePercentage(
+          today,
+          monthStart,
+          holidays,
+          workDay,
+        );
 
-          return right(AttendancePercentage(percentage: percentage));
-        }
-
-        return right(AttendancePercentage(percentage: 0));
+        return right(AttendancePercentage(percentage: percentage));
       });
     });
   }
@@ -55,7 +51,7 @@ class GetAttendancePercentageUsecase
   double calculateAttendancePercentage(
     DateTime today,
     DateTime monthStart,
-    CollegeHolidays holidays,
+    CollegeHolidays? holidays,
     WorkingDays workDay,
   ) {
     int daysPassed = today.difference(monthStart).inDays + 1;
@@ -71,12 +67,14 @@ class GetAttendancePercentageUsecase
     }
 
     int holidayCount =
-        holidays.holidayDates
+        holidays?.holidayDates
             ?.where(
               (h) => h.date.isBefore(today) || h.date.isAtSameMomentAs(today),
             )
             .length ??
         0;
+
+    print(DateTime(2026, 4, 17).millisecondsSinceEpoch);
 
     int workingDaysPassed = daysPassed - sundayCount - holidayCount;
 
