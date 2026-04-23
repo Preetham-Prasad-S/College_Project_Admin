@@ -7,6 +7,7 @@ import 'package:staff_app/core/services/geolocator_service.dart';
 import 'package:staff_app/features/auth/data/datasource/auth_datasource_impl.dart';
 import 'package:staff_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:staff_app/features/auth/domain/enitites/auth_staff.dart';
+import 'package:staff_app/features/history/data/datasources/history_datasource_impl.dart';
 import 'package:staff_app/features/home/data/datasources/home_datasource_impl.dart';
 import 'package:staff_app/features/home/data/models/staff_history_data_model.dart';
 import 'package:staff_app/features/home/data/models/staff_monthly_history_model.dart';
@@ -30,32 +31,12 @@ class TestScreen extends ConsumerWidget {
 
             ElevatedButton(
               onPressed: () async {
-                final d = HomeDatasourceImpl(
-                  firebaseInstance: FirebaseFirestore.instance,
-                );
-
-                final r = HomeRepositoryImpl(
-                  datasource: d,
-                  locationService: GeolocatorService(),
-                );
-
-                final ad = AuthDatasourceImpl(
+                final d = HistoryDatasourceImpl(
                   firebaseAuth: FirebaseAuth.instance,
                   firebaseFirestore: FirebaseFirestore.instance,
                 );
 
-                final ar = AuthRepositoryImpl(
-                  authDatasource: ad,
-                  firebaseAuth: FirebaseAuth.instance,
-                );
-
-                final u = GetAttendanceDetailsUsecase(repository: r);
-
-                final result = await u(
-                  GetAttendanceDetailsUsecaseParams(
-                    currentTime: DateTime.now(),
-                  ),
-                );
+                final result = await d.getMonthHistory(DateTime.now());
 
                 print(result);
               },

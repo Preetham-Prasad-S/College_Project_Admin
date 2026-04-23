@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:staff_app/features/home/presentation/screens/home_screen.dart';
-import 'package:staff_app/history_screen.dart';
+import 'package:staff_app/features/history/presentation/screens/history_screen.dart';
 import 'package:staff_app/leave_screen.dart';
 import 'package:staff_app/profile_screen.dart';
 
